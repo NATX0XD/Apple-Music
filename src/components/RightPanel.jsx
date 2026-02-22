@@ -3,7 +3,7 @@ import { Chip, Image, ScrollShadow } from '@heroui/react';
 import { TrendingUp, Clock } from 'lucide-react';
 import { GENRE_TAGS, getArtwork, formatDuration } from '../services/itunesApi';
 
-export default function RightPanel({ onGenreClick, recentlyPlayed, currentTrack, onPlayTrack }) {
+export default function RightPanel({ onGenreClick, recentlyPlayed, currentTrack, onPlayTrack, onOpenDrawer }) {
     return (
         <div className="flex flex-col h-full overflow-hidden">
             <ScrollShadow className="flex-1 p-4 space-y-6 overflow-y-auto">
@@ -47,11 +47,11 @@ export default function RightPanel({ onGenreClick, recentlyPlayed, currentTrack,
                                     className={`w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-all group
                     ${currentTrack?.trackId === track.trackId ? 'bg-white/5' : ''}`}
                                 >
-                                    <Image
+                                    <img
                                         src={getArtwork(track.artworkUrl100, 80)}
                                         alt={track.trackName}
                                         className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
-                                        classNames={{ wrapper: "flex-shrink-0 w-10 h-10" }}
+                                        loading="lazy"
                                     />
                                     <div className="flex-1 min-w-0 text-left">
                                         <p className="text-xs font-medium truncate">{track.trackName}</p>
@@ -68,12 +68,19 @@ export default function RightPanel({ onGenreClick, recentlyPlayed, currentTrack,
 
                 {/* Now Playing Card */}
                 {currentTrack && (
-                    <div className="glass-card p-3 ambient-glow">
-                        <p className="text-[10px] uppercase tracking-wider text-purple-400 font-semibold mb-2">Now Playing</p>
-                        <Image
+                    <div
+                        className="glass-card p-3 ambient-glow cursor-pointer hover:bg-white/10 transition-colors group"
+                        onClick={onOpenDrawer}
+                    >
+                        <p className="text-[10px] uppercase tracking-wider text-purple-400 font-semibold mb-2 flex items-center justify-between">
+                            <span>Now Playing</span>
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">Show Queue</span>
+                        </p>
+                        <img
                             src={getArtwork(currentTrack.artworkUrl100, 500)}
                             alt={currentTrack.trackName}
                             className="w-full aspect-square rounded-xl object-cover mb-3"
+                            loading="lazy"
                         />
                         <p className="text-sm font-semibold truncate">{currentTrack.trackName}</p>
                         <p className="text-xs text-default-400 truncate">{currentTrack.artistName}</p>

@@ -18,10 +18,11 @@ export default function PlayerBar({
     onPrev,
     onShuffle,
     onRepeat,
+    onOpenDrawer,
 }) {
     if (!currentTrack) {
         return (
-            <div className="glass-strong flex items-center justify-center h-full">
+            <div className="apple-glass flex items-center justify-center h-full border-t">
                 <p className="text-default-400 text-sm">Select a song to start playing</p>
             </div>
         );
@@ -30,17 +31,20 @@ export default function PlayerBar({
     const artworkUrl = getArtwork(currentTrack.artworkUrl100, 120);
 
     return (
-        <div className="glass-strong flex items-center gap-4 px-5 h-full">
+        <div className="apple-glass flex items-center gap-4 px-5 h-full border-t">
             {/* Track Info */}
-            <div className="flex items-center gap-3 min-w-0 w-[240px]">
-                <Image
+            <div
+                className="flex items-center gap-3 min-w-0 w-[240px] cursor-pointer group hover:bg-white/5 p-2 -ml-2 rounded-xl transition-colors"
+                onClick={onOpenDrawer}
+            >
+                <img
                     src={artworkUrl}
                     alt={currentTrack.trackName}
-                    className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                    classNames={{ wrapper: "flex-shrink-0" }}
+                    className="w-12 h-12 rounded-lg object-cover flex-shrink-0 shadow-md group-hover:shadow-lg transition-all"
+                    loading="lazy"
                 />
                 <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">{currentTrack.trackName}</p>
+                    <p className="text-sm font-medium truncate group-hover:text-purple-300 transition-colors">{currentTrack.trackName}</p>
                     <p className="text-xs text-default-400 truncate">{currentTrack.artistName}</p>
                 </div>
             </div>

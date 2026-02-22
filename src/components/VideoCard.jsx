@@ -13,11 +13,11 @@ export default function VideoCard({ track, onPlay }) {
         >
             {/* Thumbnail 16:9 */}
             <div className="relative mb-3 rounded-xl overflow-hidden aspect-video">
-                <Image
+                <img
                     src={artwork}
                     alt={track.trackName}
                     className="w-full h-full object-cover"
-                    classNames={{ wrapper: "w-full h-full !max-w-full" }}
+                    loading="lazy"
                 />
 
                 {/* Play overlay */}

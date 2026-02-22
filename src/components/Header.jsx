@@ -33,13 +33,14 @@ export default function Header({
             <form onSubmit={handleSubmit} className="flex-1 max-w-md">
                 <Input
                     size="sm"
+                    radius="full"
                     placeholder="Search songs, artists, albums..."
-                    startContent={<Search size={16} className="text-default-400" />}
+                    startContent={<Search size={16} className="text-default-400 ml-1" />}
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     classNames={{
-                        inputWrapper: "glass !bg-white/5 border border-white/10 group-data-[focus=true]:border-purple-500/50 h-9",
-                        input: "text-sm"
+                        inputWrapper: "bg-white/10 hover:bg-white/15 focus-within:!bg-white/20 border-none h-10 shadow-none px-4 transition-colors",
+                        input: "text-sm text-white/90 placeholder:text-white/40 font-medium"
                     }}
                 />
             </form>

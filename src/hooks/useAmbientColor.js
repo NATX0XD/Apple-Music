@@ -8,7 +8,6 @@ export function useAmbientColor() {
         if (!imageUrl) return;
 
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         img.onload = () => {
             const canvas = canvasRef.current;
             const ctx = ctxRef.current;

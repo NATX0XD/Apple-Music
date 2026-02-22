@@ -11,51 +11,22 @@ export function useAudioPlayer() {
     const [queueIndex, setQueueIndex] = useState(-1);
     const [shuffle, setShuffle] = useState(false);
     const [repeat, setRepeat] = useState(false);
-
-    useEffect(() => {
-        const audio = new Audio();
-        audio.volume = volume;
-        audioRef.current = audio;
-
-        const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-        const onLoadedMetadata = () => setDuration(audio.duration);
-        const onEnded = () => {
-            if (repeat) {
-                audio.currentTime = 0;
-                audio.play();
-            } else {
-                playNext();
-            }
-        };
-
-        audio.addEventListener('timeupdate', onTimeUpdate);
-        audio.addEventListener('loadedmetadata', onLoadedMetadata);
-        audio.addEventListener('ended', onEnded);
-
-        return () => {
-            audio.removeEventListener('timeupdate', onTimeUpdate);
-            audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-            audio.removeEventListener('ended', onEnded);
-            audio.pause();
-            audio.src = '';
-        };
-        // eslint-disable-next-line
-    }, []);
+    const [isVideo, setIsVideo] = useState(false);
 
     useEffect(() => {
         if (audioRef.current) {
-            audioRef.current.volume = volume;
+            audioRef.current.volume = Math.max(0, Math.min(1, volume));
         }
     }, [volume]);
 
     const playTrack = useCallback((track, trackQueue = [], index = 0) => {
-        const audio = audioRef.current;
-        if (!audio || !track?.previewUrl) return;
+        if (!track?.previewUrl) return;
 
-        audio.src = track.previewUrl;
-        audio.play().catch(() => { });
+        const isMusicVideo = track.wrapperType === 'track' && track.kind === 'music-video';
+        setIsVideo(isMusicVideo);
         setCurrentTrack(track);
         setIsPlaying(true);
+
         if (trackQueue.length > 0) {
             setQueue(trackQueue);
             setQueueIndex(index);
@@ -87,6 +58,7 @@ export function useAudioPlayer() {
     }, []);
 
     const playNext = useCallback(() => {
+        console.trace("[useAudioPlayer] playNext called! Tracing stack:");
         if (queue.length === 0) return;
         let nextIndex;
         if (shuffle) {
@@ -114,9 +86,29 @@ export function useAudioPlayer() {
         }
     }, [queue, queueIndex, playTrack]);
 
+    const handleTimeUpdate = useCallback((e) => setCurrentTime(e.target.currentTime), []);
+    const handleLoadedMetadata = useCallback((e) => setDuration(e.target.duration), []);
+
+    const handleEnded = useCallback((e) => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        // Very strict check: the media must actually be near its end to be considered ended natively.
+        // This defeats ALL spurious unmount/swap/src-change "ended" events.
+        if (audio.duration > 0 && audio.currentTime >= audio.duration - 1) {
+            if (repeat) {
+                audio.currentTime = 0;
+                audio.play().catch(() => { });
+            } else {
+                playNext();
+            }
+        }
+    }, [repeat, playNext]);
+
     return {
         currentTrack,
         isPlaying,
+        setIsPlaying,
         currentTime,
         duration,
         volume,
@@ -128,7 +120,12 @@ export function useAudioPlayer() {
         changeVolume,
         playNext,
         playPrev,
+        isVideo,
+        audioRef,
         setShuffle: () => setShuffle(!shuffle),
         setRepeat: () => setRepeat(!repeat),
+        handleTimeUpdate,
+        handleLoadedMetadata,
+        handleEnded
     };
 }

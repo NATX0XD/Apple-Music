@@ -26,7 +26,9 @@ export const searchByGenre = async (genre, limit = 25) => {
 
 export const getArtwork = (url, size = 300) => {
     if (!url) return '';
-    return url.replace(/\d+x\d+bb/, `${size}x${size}bb`);
+    // iTunes returns URLs like .../100x100bb.jpg
+    // Replace the default 100x100 with our desired size
+    return url.replace(/100x100bb/, `${size}x${size}bb`);
 };
 
 export const formatDuration = (ms) => {

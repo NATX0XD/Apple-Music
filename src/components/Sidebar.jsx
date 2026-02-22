@@ -26,14 +26,11 @@ export default function Sidebar({ activeNav, onNavChange, isDark, onThemeToggle,
     };
 
     return (
-        <div className="flex flex-col h-full glass-strong p-4 overflow-hidden">
+        <div className="flex flex-col h-full apple-glass p-4 overflow-hidden border-r">
             {/* Logo */}
-            <div className="flex items-center gap-2 mb-6 px-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
-                    <Music2 size={18} className="text-white" />
-                </div>
-                <span className="text-lg font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-                    Music
+            <div className="flex items-center mb-8 px-2 mt-2">
+                <span className="text-xl font-bold tracking-tight text-white/90">
+                    APPLE MUSIC
                 </span>
             </div>
 
@@ -95,32 +92,14 @@ export default function Sidebar({ activeNav, onNavChange, isDark, onThemeToggle,
                 ))}
             </nav>
 
-            {/* Bottom actions */}
-            <div className="border-t border-white/5 pt-4 space-y-2">
-                {/* Profile */}
-                <div className="flex items-center gap-3 px-3 py-2">
-                    <Avatar
-                        size="sm"
-                        name="User"
-                        className="bg-gradient-to-br from-purple-500 to-pink-500"
-                    />
-                    <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium truncate">Music Lover</p>
-                        <p className="text-[10px] text-default-400">Premium</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center justify-between px-3">
-                    <button className="p-2 rounded-lg text-default-400 hover:text-white hover:bg-white/5 transition-colors">
-                        <Settings size={18} />
-                    </button>
-                    <button
-                        onClick={onThemeToggle}
-                        className="p-2 rounded-lg text-default-400 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                        {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                    </button>
-                </div>
+            {/* Bottom actions (Theme only) */}
+            <div className="mt-auto px-2">
+                <button
+                    onClick={onThemeToggle}
+                    className="w-full flex justify-center items-center py-3 rounded-xl bg-white/5 hover:bg-white/10 text-default-400 hover:text-white transition-colors"
+                >
+                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
             </div>
         </div>
     );

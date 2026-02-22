@@ -45,11 +45,11 @@ export default function TrackList({ tracks, currentTrack, onPlay }) {
 
                             {/* Title + Artist */}
                             <div className="flex items-center gap-3 min-w-0">
-                                <Image
+                                <img
                                     src={getArtwork(track.artworkUrl100, 80)}
                                     alt=""
                                     className="w-9 h-9 rounded-lg object-cover flex-shrink-0"
-                                    classNames={{ wrapper: "flex-shrink-0 w-9 h-9" }}
+                                    loading="lazy"
                                 />
                                 <div className="min-w-0">
                                     <p className={`text-sm truncate ${isActive ? 'text-purple-400 font-semibold' : 'font-medium'}`}>

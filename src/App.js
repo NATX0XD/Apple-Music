@@ -8,6 +8,7 @@ import HeroBanner from './components/HeroBanner';
 import TrackCard from './components/TrackCard';
 import VideoCard from './components/VideoCard';
 import TrackList from './components/TrackList';
+import NowPlayingDrawer from './components/NowPlayingDrawer';
 import { searchTracks, searchVideos, FEATURED_SEARCHES, getArtwork } from './services/itunesApi';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useAmbientColor } from './hooks/useAmbientColor';
@@ -21,6 +22,7 @@ function App() {
     const [featuredTracks, setFeaturedTracks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     const player = useAudioPlayer();
     const { extractColor } = useAmbientColor();
@@ -86,10 +88,16 @@ function App() {
         setLoading(false);
     }, [searchTerm]);
 
-    // Play track
     const handlePlayTrack = useCallback((track, queue, index) => {
         if (!track.previewUrl) return;
-        player.playTrack(track, queue || tracks, index || tracks.indexOf(track));
+
+        let resolvedIndex = index;
+        if (resolvedIndex === undefined) {
+            const idx = tracks.indexOf(track);
+            resolvedIndex = idx !== -1 ? idx : 0;
+        }
+
+        player.playTrack(track, queue || tracks, resolvedIndex);
 
         setRecentlyPlayed(prev => {
             const filtered = prev.filter(t => t.trackId !== track.trackId);
@@ -172,7 +180,7 @@ function App() {
                     </div>
 
                     {/* Content area: main + right panel */}
-                    <div className="flex-1 flex overflow-hidden">
+                    <div className="flex-1 flex overflow-hidden relative">
                         {/* Main Content */}
                         <ScrollShadow className="flex-1 p-6 overflow-y-auto">
                             {loading ? (
@@ -208,8 +216,8 @@ function App() {
 
                                     {/* Grid Cards */}
                                     <div className={`grid gap-4 mb-8 ${contentType === 'videos'
-                                            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                                            : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
+                                        ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                                        : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
                                         }`}>
                                         {gridTracks.map((track) =>
                                             contentType === 'videos' ? (
@@ -251,15 +259,64 @@ function App() {
                             )}
                         </ScrollShadow>
 
-                        {/* Right Panel */}
+                        {/* Right Panel or Video Player */}
                         <div className="w-[280px] flex-shrink-0 border-l border-white/5 hidden lg:block">
-                            <RightPanel
-                                onGenreClick={handleGenreClick}
-                                recentlyPlayed={recentlyPlayed}
-                                currentTrack={player.currentTrack}
-                                onPlayTrack={(t) => handlePlayTrack(t)}
-                            />
+                            {player.isVideo && player.currentTrack && !isDrawerOpen ? (
+                                <div className="h-full flex flex-col p-4 bg-black/20">
+                                    <h3 className="text-sm font-bold mb-4">Now Playing Video</h3>
+                                    <div className="flex-1 w-full bg-black/60 rounded-xl overflow-hidden relative shadow-lg glass-card flex items-center justify-center">
+                                        <video
+                                            ref={player.audioRef}
+                                            src={player.currentTrack.previewUrl}
+                                            className="w-full h-auto max-h-full object-contain"
+                                            muted={player.volume === 0}
+                                            playsInline
+                                            autoPlay
+                                            controls
+                                            onTimeUpdate={player.handleTimeUpdate}
+                                            onLoadedMetadata={player.handleLoadedMetadata}
+                                            onEnded={player.handleEnded}
+                                            onPlay={() => player.setIsPlaying(true)}
+                                            onPause={() => player.setIsPlaying(false)}
+                                        />
+                                    </div>
+                                    <div className="mt-4 text-center">
+                                        <p className="text-sm font-medium">{player.currentTrack.trackName}</p>
+                                        <p className="text-xs text-default-400">{player.currentTrack.artistName}</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <RightPanel
+                                        onGenreClick={handleGenreClick}
+                                        recentlyPlayed={recentlyPlayed}
+                                        currentTrack={player.currentTrack}
+                                        onPlayTrack={(t) => handlePlayTrack(t)}
+                                        onOpenDrawer={() => setIsDrawerOpen(true)}
+                                    />
+                                    {player.currentTrack && !player.isVideo && (
+                                        <audio
+                                            ref={player.audioRef}
+                                            src={player.currentTrack.previewUrl}
+                                            autoPlay
+                                            onTimeUpdate={player.handleTimeUpdate}
+                                            onLoadedMetadata={player.handleLoadedMetadata}
+                                            onEnded={player.handleEnded}
+                                            onPlay={() => player.setIsPlaying(true)}
+                                            onPause={() => player.setIsPlaying(false)}
+                                            className="hidden"
+                                        />
+                                    )}
+                                </>
+                            )}
                         </div>
+
+                        {/* Now Playing Drawer overlaying Main Content + Right Panel */}
+                        <NowPlayingDrawer
+                            isOpen={isDrawerOpen}
+                            onClose={() => setIsDrawerOpen(false)}
+                            player={player}
+                        />
                     </div>
 
                     {/* Player Bar */}
@@ -279,6 +336,7 @@ function App() {
                             onPrev={player.playPrev}
                             onShuffle={player.setShuffle}
                             onRepeat={player.setRepeat}
+                            onOpenDrawer={() => setIsDrawerOpen(true)}
                         />
                     </div>
                 </div>

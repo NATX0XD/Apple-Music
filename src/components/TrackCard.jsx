@@ -14,11 +14,11 @@ export default function TrackCard({ track, isPlaying, onPlay }) {
         >
             {/* Artwork */}
             <div className="relative mb-3 rounded-xl overflow-hidden aspect-square">
-                <Image
+                <img
                     src={artwork}
                     alt={track.trackName}
                     className="w-full h-full object-cover"
-                    classNames={{ wrapper: "w-full h-full !max-w-full" }}
+                    loading="lazy"
                 />
 
                 {/* Play overlay */}
