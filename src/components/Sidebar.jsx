@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Home, History, Heart, Settings, Plus, ListMusic, Music } from 'lucide-react';
+import { Home, History, Heart, Settings, Plus, Music, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { usePlaylists } from '../hooks/useStorage';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AddPlaylistModal from './AddPlaylistModal';
 import PlaylistCover from './PlaylistCover';
+import { Tooltip } from '@heroui/react';
 
 const navItems = [
     { icon: Home, label: 'Home', path: '/' },
@@ -11,7 +12,7 @@ const navItems = [
     { icon: Heart, label: 'Favorites', path: '/favorites' },
 ];
 
-export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen }) {
+export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggleSidebar }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { playlists, createPlaylist } = usePlaylists();
@@ -22,98 +23,133 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen }) {
         navigate(`/playlist/${newPlaylist.slug}`);
     };
 
+    const isCollapsed = !isSidebarOpen;
+
     return (
-        <div className={`flex flex-col h-full apple-glass py-4 overflow-hidden border-r bg-[#1a1a24] lg:bg-transparent ${!isSidebarOpen ? 'lg:px-2 lg:items-center' : 'px-4'}`}>
+        <div className={`flex flex-col h-full apple-glass py-4 overflow-hidden border-r bg-[#1a1a24] lg:bg-transparent transition-all duration-300 ${isCollapsed ? 'lg:px-3 lg:items-center' : 'px-4'}`}>
             {/* Logo */}
-            <div className={`flex items-center mb-8 mt-2 whitespace-nowrap ${!isSidebarOpen ? 'lg:justify-center' : 'px-2'}`}>
+            <div className={`flex items-center mb-6 mt-2 whitespace-nowrap ${isCollapsed ? 'lg:justify-center' : 'px-2 justify-between'}`}>
                 {isSidebarOpen ? (
                     <span className="text-xl font-bold tracking-tight text-white/90">
                         APPLE MUSIC
                     </span>
                 ) : (
-                    <Music size={28} className="text-theme-400 hidden lg:block" fill="currentColor" />
+                    <Music size={24} className="text-theme-400 hidden lg:block" fill="currentColor" />
                 )}
-            </div>
-
-            {/* Navigation */}
-            <div className={`mb-2 ${!isSidebarOpen ? 'lg:hidden' : 'px-2'}`}>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-default-400">Menu</span>
-            </div>
-            <nav className="space-y-1 mb-6">
-                {navItems.map(({ icon: Icon, label, path }) => (
-                    <button
-                        key={path}
-                        onClick={() => navigate(path)}
-                        className={`w-full flex items-center gap-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
-              ${!isSidebarOpen ? 'lg:justify-center lg:px-0 px-3' : 'px-3'}
-              ${location.pathname === path
-                                ? 'bg-gradient-to-r from-theme-500/20 to-pink-500/20 text-white border border-theme-500/20'
-                                : 'text-default-500 hover:text-white hover:bg-white/5'
-                            }`}
-                        title={!isSidebarOpen ? label : ''}
-                    >
-                        <Icon size={isSidebarOpen ? 18 : 22} className={location.pathname === path ? 'text-theme-400' : ''} />
-                        <span className={!isSidebarOpen ? 'lg:hidden' : ''}>{label}</span>
-                    </button>
-                ))}
-            </nav>
-
-            {/* Library / Playlists */}
-            <div className={`mb-2 flex items-center justify-between ${!isSidebarOpen ? 'lg:justify-center lg:px-0 px-2' : 'px-2'}`}>
-                <span className={`text-[10px] font-semibold uppercase tracking-wider text-default-400 ${!isSidebarOpen ? 'lg:hidden' : ''}`}>Playlists</span>
+                {/* Collapse/Expand Toggle - desktop only */}
                 <button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="p-1 hover:bg-white/10 rounded-full text-default-400 hover:text-white transition-colors"
-                    title={!isSidebarOpen ? "Create Playlist" : ""}
+                    onClick={onToggleSidebar}
+                    className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/10 text-default-400 hover:text-white transition-colors"
+                    title={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
                 >
-                    <Plus size={isSidebarOpen ? 14 : 18} />
+                    {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
                 </button>
             </div>
 
-            <nav className={`space-y-1 flex-1 overflow-y-auto custom-scrollbar ${!isSidebarOpen ? 'lg:pr-0 pr-1' : 'pr-1'}`}>
+            {/* Navigation */}
+            <div className={`mb-2 ${isCollapsed ? 'lg:hidden' : 'px-2'}`}>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-default-400">Menu</span>
+            </div>
+            <nav className={`space-y-1.5 mb-6 ${isCollapsed ? 'lg:px-0' : ''}`}>
+                {navItems.map(({ icon: Icon, label, path }) => {
+                    const isActive = location.pathname === path;
+                    const button = (
+                        <button
+                            key={path}
+                            onClick={() => navigate(path)}
+                            className={`w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200
+                                ${isCollapsed ? 'lg:justify-center lg:p-3' : 'px-3 py-2.5'}
+                                ${isActive
+                                    ? `${isCollapsed ? 'lg:bg-theme-500/15' : 'bg-gradient-to-r from-theme-500/20 to-pink-500/20'} text-white border border-theme-500/20`
+                                    : 'text-default-500 hover:text-white hover:bg-white/5 border border-transparent'
+                                }`}
+                            title={isCollapsed ? label : ''}
+                        >
+                            <Icon size={isCollapsed ? 20 : 18} className={isActive ? 'text-theme-400' : ''} />
+                            <span className={isCollapsed ? 'lg:hidden' : ''}>{label}</span>
+                        </button>
+                    );
+
+                    if (isCollapsed) {
+                        return (
+                            <Tooltip key={path} content={label} placement="right" delay={0} closeDelay={0}>
+                                {button}
+                            </Tooltip>
+                        );
+                    }
+                    return button;
+                })}
+            </nav>
+
+            {/* Library / Playlists */}
+            <div className={`mb-2 flex items-center justify-between ${isCollapsed ? 'lg:justify-center lg:px-0 px-2' : 'px-2'}`}>
+                <span className={`text-[10px] font-semibold uppercase tracking-wider text-default-400 ${isCollapsed ? 'lg:hidden' : ''}`}>Playlists</span>
+                <Tooltip content="Create Playlist" placement="right" isDisabled={!isCollapsed} delay={0} closeDelay={0}>
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className={`hover:bg-white/10 rounded-full text-default-400 hover:text-white transition-colors ${isCollapsed ? 'lg:p-2 p-1' : 'p-1'}`}
+                        title={isSidebarOpen ? "" : "Create Playlist"}
+                    >
+                        <Plus size={isCollapsed ? 20 : 14} />
+                    </button>
+                </Tooltip>
+            </div>
+
+            <nav className={`space-y-1 flex-1 overflow-y-auto custom-scrollbar ${isCollapsed ? 'lg:pr-0 pr-1' : 'pr-1'}`}>
                 {playlists.map((pl) => {
                     const path = `/playlist/${pl.slug}`;
                     const isActive = location.pathname === path;
-                    return (
+                    const button = (
                         <button
                             key={pl.id}
                             onClick={() => navigate(path)}
-                            className={`w-full flex items-center gap-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 truncate
-                  ${!isSidebarOpen ? 'lg:justify-center lg:px-0 px-3' : 'px-3'}
-                  ${isActive
-                                    ? 'bg-gradient-to-r from-theme-500/20 to-pink-500/20 text-white border border-theme-500/20'
-                                    : 'text-default-500 hover:text-white hover:bg-white/5 text-left'
+                            className={`w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200 truncate
+                                ${isCollapsed ? 'lg:justify-center lg:p-2.5' : 'px-3 py-2'}
+                                ${isActive
+                                    ? `${isCollapsed ? 'lg:bg-theme-500/15' : 'bg-gradient-to-r from-theme-500/20 to-pink-500/20'} text-white border border-theme-500/20`
+                                    : 'text-default-500 hover:text-white hover:bg-white/5 text-left border border-transparent'
                                 }`}
-                            title={!isSidebarOpen ? pl.name : ""}
+                            title={isCollapsed ? pl.name : ""}
                         >
                             <PlaylistCover
                                 tracks={pl.tracks}
-                                className={`${isSidebarOpen ? 'w-5 h-5' : 'lg:w-8 lg:h-8 w-5 h-5'} flex-shrink-0 opacity-80`}
-                                iconSize={isSidebarOpen ? 16 : 22}
+                                className={`${isCollapsed ? 'lg:w-7 lg:h-7 w-5 h-5' : 'w-5 h-5'} flex-shrink-0 opacity-80 rounded-md`}
+                                iconSize={isCollapsed ? 18 : 16}
                             />
-                            <span className={`truncate ${!isSidebarOpen ? 'lg:hidden' : ''}`}>{pl.name}</span>
+                            <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''}`}>{pl.name}</span>
                         </button>
-                    )
+                    );
+
+                    if (isCollapsed) {
+                        return (
+                            <Tooltip key={pl.id} content={pl.name} placement="right" delay={0} closeDelay={0}>
+                                {button}
+                            </Tooltip>
+                        );
+                    }
+                    return <React.Fragment key={pl.id}>{button}</React.Fragment>;
                 })}
                 {playlists.length === 0 && (
-                    <div className={`py-4 text-xs text-default-500 text-center border border-dashed border-white/10 rounded-xl mt-2 ${!isSidebarOpen ? 'lg:px-1 px-3' : 'px-3'}`}>
-                        {!isSidebarOpen ? (
-                            <span className="hidden lg:block">Click +</span>
+                    <div className={`py-4 text-xs text-default-500 text-center border border-dashed border-white/10 rounded-xl mt-2 ${isCollapsed ? 'lg:px-1 px-3' : 'px-3'}`}>
+                        {isCollapsed ? (
+                            <span className="hidden lg:block text-lg">+</span>
                         ) : null}
-                        <span className={!isSidebarOpen ? 'lg:hidden' : ''}>No playlists yet.<br />Click + to create one.</span>
+                        <span className={isCollapsed ? 'lg:hidden' : ''}>No playlists yet.<br />Click + to create one.</span>
                     </div>
                 )}
             </nav>
 
             {/* Bottom actions (Theme only) */}
-            <div className={`mt-4 flex-shrink-0 ${!isSidebarOpen ? 'lg:px-0 px-2' : 'px-2'}`}>
-                <button
-                    onClick={onThemeToggle}
-                    className="w-full flex justify-center items-center py-3 rounded-xl bg-white/5 hover:bg-white/10 text-default-400 hover:text-white transition-colors"
-                    title="Settings & Appearance"
-                >
-                    <Settings size={isSidebarOpen ? 18 : 22} />
-                </button>
+            <div className={`mt-4 flex-shrink-0 ${isCollapsed ? 'lg:px-0 px-2' : 'px-2'}`}>
+                <Tooltip content="Settings" placement="right" isDisabled={!isCollapsed} delay={0} closeDelay={0}>
+                    <button
+                        onClick={onThemeToggle}
+                        className={`w-full flex justify-center items-center rounded-xl bg-white/5 hover:bg-white/10 text-default-400 hover:text-white transition-colors ${isCollapsed ? 'lg:p-3' : 'py-3'}`}
+                        title="Settings & Appearance"
+                    >
+                        <Settings size={isCollapsed ? 20 : 18} />
+                    </button>
+                </Tooltip>
             </div>
 
             <AddPlaylistModal
@@ -121,6 +157,10 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen }) {
                 onClose={() => setIsAddModalOpen(false)}
                 onSubmit={handleCreatePlaylist}
             />
+
+            <div className={`mt-2 pb-2 text-[10px] text-default-400 opacity-50 text-center ${isCollapsed ? 'lg:hidden' : ''}`}>
+                Copyright &copy; {new Date().getFullYear() + 543} by Mr. Nattakit Jinakul TCT
+            </div>
         </div >
     );
 }

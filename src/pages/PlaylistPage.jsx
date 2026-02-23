@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import TrackList from '../components/TrackList';
 import { usePlaylists } from '../hooks/useStorage';
-import { Library, Trash2, Music } from 'lucide-react';
+import { Trash2, Music } from 'lucide-react';
+import ConfirmModal from '../components/ConfirmModal';
 import PlaylistCover from '../components/PlaylistCover';
 
 export default function PlaylistPage({ player, handlePlayTrack }) {
     const { slug } = useParams();
     const navigate = useNavigate();
     const { playlists, deletePlaylist, removeTrackFromPlaylist } = usePlaylists();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const playlist = playlists.find(p => p.slug === slug);
 
@@ -17,10 +19,9 @@ export default function PlaylistPage({ player, handlePlayTrack }) {
     }
 
     const handleDeletePlaylist = () => {
-        if (window.confirm(`Are you sure you want to delete the playlist "${playlist.name}"?`)) {
-            deletePlaylist(playlist.id);
-            navigate('/');
-        }
+        deletePlaylist(playlist.id);
+        setIsDeleteModalOpen(false);
+        navigate('/');
     };
 
     return (
@@ -44,7 +45,7 @@ export default function PlaylistPage({ player, handlePlayTrack }) {
                 </div>
 
                 <button
-                    onClick={handleDeletePlaylist}
+                    onClick={() => setIsDeleteModalOpen(true)}
                     className="flex justify-center items-center p-3 sm:mb-2 bg-white/5 hover:bg-red-500/20 text-default-400 hover:text-red-400 rounded-xl transition-colors"
                     title="Delete Playlist"
                 >
@@ -58,7 +59,6 @@ export default function PlaylistPage({ player, handlePlayTrack }) {
                         tracks={playlist.tracks}
                         currentTrack={player.currentTrack}
                         onPlay={handlePlayTrack}
-                        // Optional: ability to remove a single track
                         playlistActions={{
                             onRemove: (trackId) => removeTrackFromPlaylist(playlist.id, trackId)
                         }}
@@ -71,6 +71,17 @@ export default function PlaylistPage({ player, handlePlayTrack }) {
                     <p className="text-default-400">Play a song and open the drawer to add it here.</p>
                 </div>
             )}
+
+            {/* Delete Confirmation Modal */}
+            <ConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeletePlaylist}
+                title="Delete Playlist"
+                message={`Delete "${playlist.name}" and its ${playlist.tracks.length} track${playlist.tracks.length !== 1 ? 's' : ''}? This can't be undone.`}
+                confirmText="Delete"
+                isDanger
+            />
         </div>
     );
 }

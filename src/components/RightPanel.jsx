@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chip, ScrollShadow } from '@heroui/react';
-import { TrendingUp, Play } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { GENRE_TAGS, getArtwork } from '../services/itunesApi';
 
 export default function RightPanel({ onGenreClick, currentTrack, onOpenDrawer }) {

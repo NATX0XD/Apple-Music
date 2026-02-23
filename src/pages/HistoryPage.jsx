@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import TrackList from '../components/TrackList';
 import { useHistory } from '../hooks/useStorage';
-import { History as HistoryIcon, Trash2, AlertTriangle } from 'lucide-react';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react';
+import { History as HistoryIcon, Trash2 } from 'lucide-react';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function HistoryPage({ player, handlePlayTrack }) {
     const { history, clearHistory } = useHistory();
@@ -53,53 +53,16 @@ export default function HistoryPage({ player, handlePlayTrack }) {
                 </div>
             )}
 
-            <Modal
+            {/* Clear History Confirmation Modal */}
+            <ConfirmModal
                 isOpen={isClearModalOpen}
                 onClose={() => setIsClearModalOpen(false)}
-                backdrop="blur"
-                placement="center"
-                size="md"
-                className="max-w-[400px]"
-                classNames={{
-                    base: "apple-glass rounded-2xl",
-                    header: "border-b border-black/5 dark:border-white/5 px-6 py-5",
-                    body: "px-6 py-6",
-                    footer: "border-t border-black/5 dark:border-white/5 px-6 py-4",
-                    closeButton: "hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/5 transition-colors"
-                }}
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                <h2 className="text-xl font-bold flex items-center gap-2 text-red-400">
-                                    <AlertTriangle size={24} />
-                                    Clear History
-                                </h2>
-                            </ModalHeader>
-
-                            <ModalBody>
-                                <p className="text-base text-default-300">
-                                    Are you sure you want to clear your entire listening history? This action cannot be undone.
-                                </p>
-                            </ModalBody>
-
-                            <ModalFooter>
-                                <Button variant="light" onPress={onClose} className="text-default-400 font-medium">
-                                    Cancel
-                                </Button>
-                                <Button
-                                    color="danger"
-                                    onPress={confirmClearHistory}
-                                    className="font-semibold shadow-lg shadow-red-500/20"
-                                >
-                                    Clear History
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+                onConfirm={confirmClearHistory}
+                title="Clear History"
+                message="Are you sure you want to clear your entire listening history? This action cannot be undone."
+                confirmText="Clear History"
+                isDanger
+            />
         </div>
     );
 }

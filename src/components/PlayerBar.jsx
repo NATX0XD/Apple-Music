@@ -1,6 +1,6 @@
 import React from 'react';
 import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Volume2, VolumeX, ExternalLink } from 'lucide-react';
-import { Slider, Image } from '@heroui/react';
+import { Slider } from '@heroui/react';
 import { getArtwork, formatDuration, formatPrice } from '../services/itunesApi';
 
 export default function PlayerBar({
@@ -121,7 +121,7 @@ export default function PlayerBar({
                         minValue={0}
                         value={volume}
                         onChange={(val) => onVolumeChange(val)}
-                        className="w-24"
+                        className="w-28"
                         classNames={{
                             track: "bg-white/10 h-1",
                             filler: "bg-gradient-to-r from-theme-500 to-pink-500",

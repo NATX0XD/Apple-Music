@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react';
-import { Check, Moon, Sun, Monitor } from 'lucide-react';
+import { Check, Moon, Sun } from 'lucide-react';
 import { useSettings } from '../hooks/useStorage';
 
 const THEME_COLORS = [
@@ -29,11 +29,11 @@ export default function SettingsModal({ isOpen, onClose }) {
                 }
             }}
             classNames={{
-                base: "apple-glass rounded-t-3xl rounded-b-none sm:rounded-2xl mx-0 sm:mx-6 mb-0 sm:mb-8 max-w-lg",
+                base: "bg-white/95 dark:bg-[#1c1c2e]/95 backdrop-blur-xl text-black dark:text-white border border-black/10 dark:border-white/10 rounded-t-3xl rounded-b-none sm:rounded-2xl mx-0 sm:mx-6 mb-0 sm:mb-8 max-w-lg shadow-2xl",
                 header: "border-b border-black/5 dark:border-white/5",
                 body: "py-6",
                 footer: "border-t border-black/5 dark:border-white/5",
-                closeButton: "hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/5 transition-colors"
+                closeButton: "right-4 top-4 left-auto hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/5 transition-colors"
             }}
         >
             <ModalContent>

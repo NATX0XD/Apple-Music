@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from '@heroui/react';
+// @heroui/react Image is not used directly here anymore
 import { Play, ExternalLink } from 'lucide-react';
 import { getArtwork, formatDuration, formatPrice } from '../services/itunesApi';
 

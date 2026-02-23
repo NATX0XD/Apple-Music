@@ -17,7 +17,7 @@ import { useAmbientColor } from './hooks/useAmbientColor';
 import { useHistory, useSettings } from './hooks/useStorage';
 
 function App() {
-    const { settings, updateSettings } = useSettings();
+    const { settings } = useSettings();
     const isDark = settings.isDark !== false; // Default true
 
     const themeBgColors = {
@@ -202,11 +202,12 @@ function App() {
                         isDark={isDark}
                         onThemeToggle={() => setIsSettingsOpen(true)}
                         isSidebarOpen={isSidebarOpen}
+                        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
                     />
                 </div>
 
                 <div className="flex flex-col h-full flex-1 min-w-0 overflow-hidden relative">
-                    <div className="h-[64px] flex-shrink-0">
+                    <div className="h-[64px] flex-shrink-0 relative z-20">
                         <Header
                             searchTerm={searchTerm}
                             onSearch={handleSearch}
@@ -254,7 +255,6 @@ function App() {
                                             ref={player.audioRef}
                                             src={player.currentTrack.previewUrl}
                                             className="w-full h-auto max-h-full object-contain"
-                                            muted={player.volume === 0}
                                             playsInline
                                             autoPlay
                                             controls
@@ -275,6 +275,11 @@ function App() {
                                     <RightPanel
                                         currentTrack={player.currentTrack}
                                         onOpenDrawer={() => setIsDrawerOpen(true)}
+                                        onGenreClick={(genre) => {
+                                            setSearchTerm(genre);
+                                            handleSearch(genre, 20);
+                                            navigate('/');
+                                        }}
                                     />
                                     {player.currentTrack && !player.isVideo && (
                                         <audio
@@ -297,6 +302,8 @@ function App() {
                             isOpen={isDrawerOpen}
                             onClose={() => setIsDrawerOpen(false)}
                             player={player}
+                            tracks={tracks}
+                            handlePlayTrack={handlePlayTrack}
                         />
                     </div>
 

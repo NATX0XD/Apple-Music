@@ -17,6 +17,31 @@
   box-sizing: border-box;
 }
 
+/* Remove dark inner background from HeroUI inputs */
+[data-slot="inner-wrapper"] {
+  background: transparent !important;
+}
+
+[data-slot="input-wrapper"] {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Remove focus outline/ring on all inputs */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+[data-slot="input-wrapper"]:focus-within,
+[data-slot="input-wrapper"] {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+*:focus-visible {
+  outline: none !important;
+}
+
 html,
 body,
 #root {
@@ -253,6 +278,33 @@ body,
 
     50% {
       opacity: 1;
+    }
+  }
+
+  @keyframes ambientPulse {
+    0% {
+      transform: scale(1) rotate(0deg);
+      opacity: 0.45;
+    }
+
+    25% {
+      transform: scale(1.05) rotate(1deg);
+      opacity: 0.6;
+    }
+
+    50% {
+      transform: scale(1.08) rotate(0deg);
+      opacity: 0.5;
+    }
+
+    75% {
+      transform: scale(1.03) rotate(-1deg);
+      opacity: 0.55;
+    }
+
+    100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 0.45;
     }
   }
 

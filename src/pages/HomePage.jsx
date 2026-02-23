@@ -25,8 +25,6 @@ export default function HomePage({
     }
 
     const heroTrack = featuredTracks[0];
-    const gridTracks = contentType === 'songs' ? tracks.slice(0, 10) : tracks;
-    const listTracks = contentType === 'songs' ? tracks.slice(0, 20) : [];
 
     return (
         <div className="animate-fade-in">
@@ -47,7 +45,10 @@ export default function HomePage({
                 </h2>
                 {searchTerm && (
                     <button
-                        onClick={() => { setSearchTerm(''); setTracks(featuredTracks); }}
+                        onClick={() => {
+                            setSearchTerm('');
+                            setTracks(featuredTracks);
+                        }}
                         className="text-xs text-theme-400 hover:text-theme-300 transition-colors"
                     >
                         Clear search
@@ -60,7 +61,7 @@ export default function HomePage({
                 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                 : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
                 }`}>
-                {gridTracks.map((track) =>
+                {tracks.slice(0, 10).map((track) =>
                     contentType === 'videos' ? (
                         <VideoCard
                             key={track.trackId}
@@ -79,11 +80,11 @@ export default function HomePage({
             </div>
 
             {/* Playlist Table (songs only) */}
-            {contentType === 'songs' && listTracks.length > 0 && (
+            {contentType === 'songs' && tracks.length > 0 && (
                 <div className="mb-6">
-                    <h3 className="text-lg font-bold mb-3">Playlist</h3>
+                    <h3 className="text-lg font-bold mb-3">All Songs list</h3>
                     <TrackList
-                        tracks={listTracks}
+                        tracks={tracks}
                         currentTrack={player.currentTrack}
                         onPlay={handlePlayTrack}
                     />

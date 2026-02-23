@@ -26,11 +26,11 @@ export default function AddPlaylistModal({ isOpen, onClose, onSubmit }) {
             size="md"
             className="mb-10 sm:mb-0 max-w-[400px]" // bump up a bit from bottom on mobile, restrict width
             classNames={{
-                base: "apple-glass rounded-2xl",
+                base: "bg-white/95 dark:bg-[#1c1c2e]/95 backdrop-blur-xl text-black dark:text-white border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl",
                 header: "border-b border-black/5 dark:border-white/5 px-6 py-5",
                 body: "px-6 py-6",
                 footer: "border-t border-black/5 dark:border-white/5 px-6 py-4",
-                closeButton: "hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/5 transition-colors"
+                closeButton: "right-4 top-4 left-auto hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/5 transition-colors"
             }}
         >
             <ModalContent>
