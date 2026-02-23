@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Music, Video, Play } from 'lucide-react';
+import { ChevronDown, Music, Video, Play, Heart, ListPlus, Plus } from 'lucide-react';
 import { Button, ButtonGroup, ScrollShadow } from '@heroui/react';
 import { getArtwork, searchVideos, formatDuration } from '../services/itunesApi';
+import { useFavorites, usePlaylists } from '../hooks/useStorage';
 
 export default function NowPlayingDrawer({ isOpen, onClose, player }) {
     const [hasVideo, setHasVideo] = useState(null);
     const [videoTrackData, setVideoTrackData] = useState(null);
     const [audioTrackData, setAudioTrackData] = useState(null);
+    const [showPlaylistMenu, setShowPlaylistMenu] = useState(false);
+
+    const { isFavorite, toggleFavorite } = useFavorites();
+    const { playlists, addTrackToPlaylist } = usePlaylists();
 
     const currentTrack = player?.currentTrack;
     const isVideoMode = player?.isVideo;
@@ -173,6 +178,57 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                         {currentTrack.collectionName}
                                     </p>
                                 )}
+
+                                {/* Action Buttons */}
+                                <div className="flex items-center gap-3 mt-6">
+                                    <button
+                                        onClick={() => toggleFavorite(currentTrack)}
+                                        className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all shadow-md ${isFavorite(currentTrack.trackId)
+                                                ? 'bg-pink-500 text-white'
+                                                : 'bg-white/10 text-default-300 hover:bg-white/20'
+                                            }`}
+                                    >
+                                        <Heart size={18} fill={isFavorite(currentTrack.trackId) ? 'currentColor' : 'none'} />
+                                        {isFavorite(currentTrack.trackId) ? 'Favorited' : 'Favorite'}
+                                    </button>
+
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setShowPlaylistMenu(!showPlaylistMenu)}
+                                            className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all shadow-md bg-white/10 text-default-300 hover:bg-white/20"
+                                        >
+                                            <ListPlus size={18} />
+                                            Add to Playlist
+                                        </button>
+
+                                        {showPlaylistMenu && (
+                                            <div className="absolute top-14 left-0 w-64 bg-[#1a1a24] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 p-2">
+                                                <div className="p-2 text-xs font-semibold text-default-400 uppercase tracking-wider mb-1">
+                                                    Select Playlist
+                                                </div>
+                                                <div className="flex flex-col max-h-48 overflow-y-auto custom-scrollbar">
+                                                    {playlists.length > 0 ? playlists.map((pl) => (
+                                                        <button
+                                                            key={pl.id}
+                                                            onClick={() => {
+                                                                addTrackToPlaylist(pl.id, currentTrack);
+                                                                setShowPlaylistMenu(false);
+                                                            }}
+                                                            className="flex items-center gap-3 px-3 py-2 hover:bg-white/10 rounded-xl text-left transition-colors text-sm font-medium"
+                                                        >
+                                                            <Plus size={14} className="text-purple-400 flex-shrink-0" />
+                                                            <span className="truncate">{pl.name}</span>
+                                                        </button>
+                                                    )) : (
+                                                        <div className="p-3 text-xs text-default-500 text-center">
+                                                            No custom playlists found.<br />Create one in the sidebar.
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Up Next Queue */}

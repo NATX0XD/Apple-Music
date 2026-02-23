@@ -1,39 +1,60 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ScrollShadow, Spinner } from '@heroui/react';
+import { ScrollShadow } from '@heroui/react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import PlayerBar from './components/PlayerBar';
 import RightPanel from './components/RightPanel';
-import HeroBanner from './components/HeroBanner';
-import TrackCard from './components/TrackCard';
-import VideoCard from './components/VideoCard';
-import TrackList from './components/TrackList';
 import NowPlayingDrawer from './components/NowPlayingDrawer';
+import SettingsModal from './components/SettingsModal';
+import HomePage from './pages/HomePage';
+import HistoryPage from './pages/HistoryPage';
+import FavoritesPage from './pages/FavoritesPage';
+import PlaylistPage from './pages/PlaylistPage';
 import { searchTracks, searchVideos, FEATURED_SEARCHES, getArtwork } from './services/itunesApi';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useAmbientColor } from './hooks/useAmbientColor';
+import { useHistory, useSettings } from './hooks/useStorage';
 
 function App() {
-    const [isDark, setIsDark] = useState(true);
-    const [activeNav, setActiveNav] = useState('home');
+    const { settings, updateSettings } = useSettings();
+    const isDark = settings.isDark !== false; // Default true
+
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [contentType, setContentType] = useState('songs');
     const [searchTerm, setSearchTerm] = useState('');
     const [tracks, setTracks] = useState([]);
     const [featuredTracks, setFeaturedTracks] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [recentlyPlayed, setRecentlyPlayed] = useState([]);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     const player = useAudioPlayer();
     const { extractColor } = useAmbientColor();
+    const { addToHistory } = useHistory();
+    const navigate = useNavigate();
+
+    // The Right Panel requirements state we should remove Recently Played. 
+    // We can just omit passing it to RightPanel.
 
     // Load featured tracks on mount
     useEffect(() => {
+        // Handle responsive sidebar
+        const handleResize = () => {
+            if (window.innerWidth < 1024) {
+                setIsSidebarOpen(false);
+            } else {
+                setIsSidebarOpen(true);
+            }
+        };
+        handleResize(); // Initial check
+        window.addEventListener('resize', handleResize);
+
         const loadFeatured = async () => {
             setLoading(true);
             try {
                 const randomSearch = FEATURED_SEARCHES[Math.floor(Math.random() * FEATURED_SEARCHES.length)];
-                const results = await searchTracks(randomSearch, 25);
+                const results = await searchTracks(randomSearch, parseInt(settings.trackLimit) || 25);
                 setFeaturedTracks(results);
                 setTracks(results);
             } catch (err) {
@@ -42,7 +63,9 @@ function App() {
             setLoading(false);
         };
         loadFeatured();
-    }, []);
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, [settings.trackLimit]);
 
     // Extract ambient color when track changes
     useEffect(() => {
@@ -54,39 +77,49 @@ function App() {
 
     // Theme toggle
     useEffect(() => {
-        document.documentElement.className = isDark ? 'dark' : 'light';
-    }, [isDark]);
+        document.documentElement.className = isDark ? `dark theme-${settings.themeColor || 'purple'}` : `light theme-${settings.themeColor || 'purple'}`;
+        // Set body background programmatically or let class handle it
+    }, [isDark, settings.themeColor]);
+
+    // Apply specific CSS variables based on theme color (Optional implementation for custom themes)
+    useEffect(() => {
+        if (settings.themeColor) {
+            document.documentElement.setAttribute('data-theme', settings.themeColor);
+        }
+    }, [settings.themeColor]);
 
     // Search handler
-    const handleSearch = useCallback(async (term) => {
+    const handleSearch = useCallback(async (term, limit = 20) => {
         setSearchTerm(term);
         setLoading(true);
+        navigate('/'); // Go back to Home to show results
         try {
             const results = contentType === 'songs'
-                ? await searchTracks(term, 30)
-                : await searchVideos(term, 20);
+                ? await searchTracks(term, limit)
+                : await searchVideos(term, limit);
             setTracks(results);
         } catch (err) {
             console.error('Search failed:', err);
         }
         setLoading(false);
-    }, [contentType]);
+    }, [contentType, navigate]);
 
     // Content type change
     const handleContentTypeChange = useCallback(async (type) => {
         setContentType(type);
-        const term = searchTerm || FEATURED_SEARCHES[0];
         setLoading(true);
+        navigate('/');
+        const term = searchTerm || FEATURED_SEARCHES[0];
         try {
             const results = type === 'songs'
-                ? await searchTracks(term, 30)
+                ? await searchTracks(term, 30) // Use limit state ideally
                 : await searchVideos(term, 20);
             setTracks(results);
         } catch (err) {
             console.error('Failed to load:', err);
         }
         setLoading(false);
-    }, [searchTerm]);
+    }, [searchTerm, navigate]);
 
     const handlePlayTrack = useCallback((track, queue, index) => {
         if (!track.previewUrl) return;
@@ -99,16 +132,9 @@ function App() {
 
         player.playTrack(track, queue || tracks, resolvedIndex);
 
-        setRecentlyPlayed(prev => {
-            const filtered = prev.filter(t => t.trackId !== track.trackId);
-            return [track, ...filtered].slice(0, 20);
-        });
-    }, [player, tracks]);
-
-    // Genre click
-    const handleGenreClick = useCallback((genre) => {
-        handleSearch(genre);
-    }, [handleSearch]);
+        // Add to local storage history
+        addToHistory(track);
+    }, [player, tracks, addToHistory]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -143,126 +169,73 @@ function App() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [player]);
 
-    // Split tracks for display
-    const heroTrack = featuredTracks[0];
-    const gridTracks = contentType === 'songs' ? tracks.slice(0, 8) : tracks;
-    const listTracks = contentType === 'songs' ? tracks.slice(0, 20) : [];
-
     return (
         <div className={`h-screen w-screen overflow-hidden ${isDark ? 'dark bg-[#0a0a0f]' : 'light bg-[#f5f5f7]'}`}>
-            {/* Ambient background glow */}
             <div className="fixed inset-0 pointer-events-none ambient-bg transition-all duration-1000" />
 
-            {/* Main Grid: sidebar | right-area */}
-            <div className="relative z-10 h-full grid" style={{
-                gridTemplateColumns: '260px 1fr',
-                gridTemplateRows: '1fr',
-            }}>
-                {/* Sidebar - full height */}
-                <Sidebar
-                    activeNav={activeNav}
-                    onNavChange={setActiveNav}
-                    isDark={isDark}
-                    onThemeToggle={() => setIsDark(!isDark)}
-                    onSearch={handleSearch}
-                />
+            <div className="relative z-10 h-full flex">
+                {/* Mobile Overlay */}
+                {isSidebarOpen && (
+                    <div
+                        className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                )}
 
-                {/* Right area = header + content area + player */}
-                <div className="flex flex-col h-full overflow-hidden">
-                    {/* Header */}
+                <div
+                    className={`z-50 flex-shrink-0 transition-all duration-300 absolute lg:relative h-full overflow-hidden ${isSidebarOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full lg:translate-x-0 lg:w-0'
+                        }`}
+                >
+                    <Sidebar
+                        isDark={isDark}
+                        onThemeToggle={() => setIsSettingsOpen(true)}
+                        isSidebarOpen={isSidebarOpen}
+                    />
+                </div>
+
+                <div className="flex flex-col h-full flex-1 min-w-0 overflow-hidden relative">
                     <div className="h-[64px] flex-shrink-0">
                         <Header
                             searchTerm={searchTerm}
                             onSearch={handleSearch}
                             contentType={contentType}
                             onContentTypeChange={handleContentTypeChange}
+                            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
                         />
                     </div>
 
-                    {/* Content area: main + right panel */}
                     <div className="flex-1 flex overflow-hidden relative">
-                        {/* Main Content */}
                         <ScrollShadow className="flex-1 p-6 overflow-y-auto">
-                            {loading ? (
-                                <div className="flex items-center justify-center h-64">
-                                    <Spinner size="lg" color="secondary" />
-                                </div>
-                            ) : (
-                                <>
-                                    {/* Hero Banner (only on home / songs) */}
-                                    {contentType === 'songs' && heroTrack && !searchTerm && (
-                                        <HeroBanner
-                                            track={heroTrack}
-                                            onPlay={(t) => handlePlayTrack(t, featuredTracks, 0)}
-                                        />
-                                    )}
-
-                                    {/* Section Title */}
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h2 className="text-xl font-bold">
-                                            {searchTerm
-                                                ? `Results for "${searchTerm}"`
-                                                : contentType === 'songs' ? 'Trending Songs' : 'Music Videos'}
-                                        </h2>
-                                        {searchTerm && (
-                                            <button
-                                                onClick={() => { setSearchTerm(''); setTracks(featuredTracks); }}
-                                                className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
-                                            >
-                                                Clear search
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {/* Grid Cards */}
-                                    <div className={`grid gap-4 mb-8 ${contentType === 'videos'
-                                        ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                                        : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
-                                        }`}>
-                                        {gridTracks.map((track) =>
-                                            contentType === 'videos' ? (
-                                                <VideoCard
-                                                    key={track.trackId}
-                                                    track={track}
-                                                    onPlay={(t) => handlePlayTrack(t)}
-                                                />
-                                            ) : (
-                                                <TrackCard
-                                                    key={track.trackId}
-                                                    track={track}
-                                                    isPlaying={player.currentTrack?.trackId === track.trackId}
-                                                    onPlay={(t) => handlePlayTrack(t)}
-                                                />
-                                            )
-                                        )}
-                                    </div>
-
-                                    {/* Playlist Table (songs only) */}
-                                    {contentType === 'songs' && listTracks.length > 0 && (
-                                        <div className="mb-6">
-                                            <h3 className="text-lg font-bold mb-3">Playlist</h3>
-                                            <TrackList
-                                                tracks={listTracks}
-                                                currentTrack={player.currentTrack}
-                                                onPlay={handlePlayTrack}
-                                            />
-                                        </div>
-                                    )}
-
-                                    {tracks.length === 0 && (
-                                        <div className="text-center py-16">
-                                            <p className="text-default-400 text-lg">No results found</p>
-                                            <p className="text-default-500 text-sm mt-1">Try a different search term</p>
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                            <Routes>
+                                <Route path="/" element={
+                                    <HomePage
+                                        loading={loading}
+                                        contentType={contentType}
+                                        searchTerm={searchTerm}
+                                        featuredTracks={featuredTracks}
+                                        tracks={tracks}
+                                        player={player}
+                                        handlePlayTrack={handlePlayTrack}
+                                        setSearchTerm={setSearchTerm}
+                                        setTracks={setTracks}
+                                    />
+                                } />
+                                <Route path="/history" element={
+                                    <HistoryPage player={player} handlePlayTrack={handlePlayTrack} />
+                                } />
+                                <Route path="/favorites" element={
+                                    <FavoritesPage player={player} handlePlayTrack={handlePlayTrack} />
+                                } />
+                                <Route path="/playlist/:slug" element={
+                                    <PlaylistPage player={player} handlePlayTrack={handlePlayTrack} />
+                                } />
+                            </Routes>
                         </ScrollShadow>
 
                         {/* Right Panel or Video Player */}
-                        <div className="w-[280px] flex-shrink-0 border-l border-white/5 hidden lg:block">
+                        <div className="w-[280px] flex-shrink-0 border-l border-white/5 hidden lg:block bg-black/10">
                             {player.isVideo && player.currentTrack && !isDrawerOpen ? (
-                                <div className="h-full flex flex-col p-4 bg-black/20">
+                                <div className="h-full flex flex-col p-4">
                                     <h3 className="text-sm font-bold mb-4">Now Playing Video</h3>
                                     <div className="flex-1 w-full bg-black/60 rounded-xl overflow-hidden relative shadow-lg glass-card flex items-center justify-center">
                                         <video
@@ -288,10 +261,7 @@ function App() {
                             ) : (
                                 <>
                                     <RightPanel
-                                        onGenreClick={handleGenreClick}
-                                        recentlyPlayed={recentlyPlayed}
                                         currentTrack={player.currentTrack}
-                                        onPlayTrack={(t) => handlePlayTrack(t)}
                                         onOpenDrawer={() => setIsDrawerOpen(true)}
                                     />
                                     {player.currentTrack && !player.isVideo && (
@@ -311,7 +281,6 @@ function App() {
                             )}
                         </div>
 
-                        {/* Now Playing Drawer overlaying Main Content + Right Panel */}
                         <NowPlayingDrawer
                             isOpen={isDrawerOpen}
                             onClose={() => setIsDrawerOpen(false)}
@@ -319,7 +288,6 @@ function App() {
                         />
                     </div>
 
-                    {/* Player Bar */}
                     <div className="h-[88px] flex-shrink-0 border-t border-white/5">
                         <PlayerBar
                             currentTrack={player.currentTrack}
@@ -341,6 +309,11 @@ function App() {
                     </div>
                 </div>
             </div>
+
+            <SettingsModal
+                isOpen={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+            />
         </div>
     );
 }

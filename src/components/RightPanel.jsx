@@ -3,7 +3,7 @@ import { Chip, Image, ScrollShadow } from '@heroui/react';
 import { TrendingUp, Clock } from 'lucide-react';
 import { GENRE_TAGS, getArtwork, formatDuration } from '../services/itunesApi';
 
-export default function RightPanel({ onGenreClick, recentlyPlayed, currentTrack, onPlayTrack, onOpenDrawer }) {
+export default function RightPanel({ onGenreClick, currentTrack, onOpenDrawer }) {
     return (
         <div className="flex flex-col h-full overflow-hidden">
             <ScrollShadow className="flex-1 p-4 space-y-6 overflow-y-auto">
@@ -28,43 +28,6 @@ export default function RightPanel({ onGenreClick, recentlyPlayed, currentTrack,
                         ))}
                     </div>
                 </div>
-
-                {/* Recently Played */}
-                {recentlyPlayed.length > 0 && (
-                    <div>
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <Clock size={16} className="text-pink-400" />
-                                <h3 className="text-sm font-semibold">Recently Played</h3>
-                            </div>
-                            <span className="text-[10px] text-default-400">{recentlyPlayed.length} tracks</span>
-                        </div>
-                        <div className="space-y-2">
-                            {recentlyPlayed.slice(0, 8).map((track, idx) => (
-                                <button
-                                    key={`${track.trackId}-${idx}`}
-                                    onClick={() => onPlayTrack(track)}
-                                    className={`w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-all group
-                    ${currentTrack?.trackId === track.trackId ? 'bg-white/5' : ''}`}
-                                >
-                                    <img
-                                        src={getArtwork(track.artworkUrl100, 80)}
-                                        alt={track.trackName}
-                                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
-                                        loading="lazy"
-                                    />
-                                    <div className="flex-1 min-w-0 text-left">
-                                        <p className="text-xs font-medium truncate">{track.trackName}</p>
-                                        <p className="text-[10px] text-default-400 truncate">{track.artistName}</p>
-                                    </div>
-                                    <span className="text-[10px] text-default-500 font-mono">
-                                        {formatDuration(track.trackTimeMillis)}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
 
                 {/* Now Playing Card */}
                 {currentTrack && (

@@ -1,20 +1,22 @@
 import React from 'react';
 import { Image } from '@heroui/react';
-import { Play, ExternalLink } from 'lucide-react';
+import { Play, ExternalLink, Trash2 } from 'lucide-react';
 import { getArtwork, formatDuration, formatPrice } from '../services/itunesApi';
 
-export default function TrackList({ tracks, currentTrack, onPlay }) {
+export default function TrackList({ tracks, currentTrack, onPlay, playlistActions }) {
     if (!tracks || tracks.length === 0) return null;
 
     return (
         <div className="glass-card overflow-hidden">
             {/* Table Header */}
-            <div className="grid grid-cols-[40px_1fr_1fr_80px_80px] gap-2 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-default-400 border-b border-white/5">
+            <div className={`grid gap-2 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-default-400 border-b border-white/5 
+                ${playlistActions ? 'grid-cols-[40px_1fr_1fr_80px_80px_40px]' : 'grid-cols-[40px_1fr_1fr_80px_80px]'}`}>
                 <span>#</span>
                 <span>Title</span>
                 <span>Album</span>
                 <span className="text-right">Time</span>
                 <span className="text-right">Price</span>
+                {playlistActions && <span></span>}
             </div>
 
             {/* Tracks */}
@@ -24,8 +26,9 @@ export default function TrackList({ tracks, currentTrack, onPlay }) {
                     return (
                         <div
                             key={`${track.trackId}-${index}`}
-                            className={`grid grid-cols-[40px_1fr_1fr_80px_80px] gap-2 px-4 py-2.5 items-center cursor-pointer 
+                            className={`grid gap-2 px-4 py-2.5 items-center cursor-pointer 
                 transition-all duration-150 group
+                ${playlistActions ? 'grid-cols-[40px_1fr_1fr_80px_80px_40px]' : 'grid-cols-[40px_1fr_1fr_80px_80px]'}
                 ${isActive ? 'bg-purple-500/10' : 'hover:bg-white/[0.03]'}`}
                             onClick={() => onPlay(track, tracks, index)}
                         >
@@ -84,6 +87,22 @@ export default function TrackList({ tracks, currentTrack, onPlay }) {
                                     <span className="text-[10px] text-default-500">—</span>
                                 )}
                             </div>
+
+                            {/* Remove Action */}
+                            {playlistActions && playlistActions.onRemove && (
+                                <div className="flex justify-end pr-2">
+                                    <button
+                                        className="opacity-0 group-hover:opacity-100 p-1.5 text-default-400 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-all"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            playlistActions.onRemove(track.trackId);
+                                        }}
+                                        title="Remove from Playlist"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     );
                 })}
