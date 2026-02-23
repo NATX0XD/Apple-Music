@@ -137,15 +137,19 @@ export function useRecentSearches() {
         if (!term.trim()) return;
         setRecentSearches(prev => {
             const filtered = prev.filter(t => t.toLowerCase() !== term.toLowerCase());
-            return [term, ...filtered].slice(0, 10); // Keep last 10 searches
+            return [term, ...filtered].slice(0, 6); // Keep last 6 searches
         });
+    };
+
+    const removeSearch = (term) => {
+        setRecentSearches(prev => prev.filter(t => t.toLowerCase() !== term.toLowerCase()));
     };
 
     const clearSearches = () => {
         setRecentSearches([]);
     };
 
-    return { recentSearches, addSearch, clearSearches };
+    return { recentSearches, addSearch, removeSearch, clearSearches };
 }
 
 export function useSettings() {

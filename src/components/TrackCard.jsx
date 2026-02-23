@@ -38,7 +38,7 @@ export default function TrackCard({ track, isPlaying, onPlay }) {
                 {/* Explicit badge */}
                 {track.trackExplicitness === 'explicit' && (
                     <div className="absolute top-2 left-2">
-                        <span className="text-[9px] font-bold bg-white/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-white/80">
+                        <span className="text-[9px] font-bold bg-black/20 dark:bg-white/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-white/90 dark:text-white/80">
                             E
                         </span>
                     </div>
@@ -47,12 +47,12 @@ export default function TrackCard({ track, isPlaying, onPlay }) {
 
             {/* Info */}
             <div>
-                <p className="text-sm font-semibold truncate mb-0.5">{track.trackName}</p>
-                <p className="text-xs text-default-400 truncate mb-2">{track.artistName}</p>
+                <p className="text-sm font-semibold text-black dark:text-white truncate mb-0.5">{track.trackName}</p>
+                <p className="text-xs text-default-600 dark:text-default-400 truncate mb-2">{track.artistName}</p>
 
                 <div className="flex items-center justify-between">
                     {track.trackPrice !== undefined && track.trackPrice >= 0 && (
-                        <span className="text-[10px] font-medium text-theme-300 bg-theme-500/10 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-medium text-theme-600 dark:text-theme-300 bg-theme-500/10 dark:bg-theme-500/20 px-2 py-0.5 rounded-full">
                             {formatPrice(track.trackPrice, track.currency)}
                         </span>
                     )}

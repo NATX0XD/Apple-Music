@@ -41,17 +41,17 @@ export default function SettingsModal({ isOpen, onClose }) {
                     <>
                         <ModalHeader className="flex flex-col gap-1">
                             <h2 className="text-xl font-bold">Settings</h2>
-                            <p className="text-sm text-default-400 font-normal">Customize your Apple Music experience</p>
+                            <p className="text-sm text-default-600 dark:text-default-400 font-normal">Customize your Apple Music experience</p>
                         </ModalHeader>
 
                         <ModalBody className="py-6 space-y-8">
                             {/* App Mode */}
                             <div>
-                                <h3 className="text-sm font-semibold uppercase tracking-wider text-default-400 mb-4">Appearance</h3>
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-default-600 dark:text-default-400 mb-4">Appearance</h3>
                                 <div className="grid grid-cols-2 gap-3">
                                     <button
                                         onClick={() => updateSettings({ isDark: false })}
-                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${!isDark ? 'border-theme-500 bg-theme-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
+                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${!isDark ? 'border-theme-500 bg-theme-500/10' : 'border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
                                             }`}
                                     >
                                         <Sun size={24} className="mb-2" />
@@ -59,7 +59,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                                     </button>
                                     <button
                                         onClick={() => updateSettings({ isDark: true })}
-                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${isDark ? 'border-theme-500 bg-theme-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
+                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${isDark ? 'border-theme-500 bg-theme-500/10' : 'border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
                                             }`}
                                     >
                                         <Moon size={24} className="mb-2" />
@@ -70,15 +70,15 @@ export default function SettingsModal({ isOpen, onClose }) {
 
                             {/* Theme Color */}
                             <div>
-                                <h3 className="text-sm font-semibold uppercase tracking-wider text-default-400 mb-4">Accent Color</h3>
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-default-600 dark:text-default-400 mb-4">Accent Color</h3>
                                 <div className="grid grid-cols-3 gap-3">
                                     {THEME_COLORS.map(color => (
                                         <button
                                             key={color.value}
                                             onClick={() => updateSettings({ themeColor: color.value })}
                                             className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${settings.themeColor === color.value
-                                                ? 'border-white/20 bg-white/10 shadow-lg'
-                                                : 'border-white/5 bg-white/5 hover:bg-white/10'
+                                                ? 'border-black/20 dark:border-white/20 bg-black/10 dark:bg-white/10 shadow-lg'
+                                                : 'border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
                                                 }`}
                                         >
                                             <div
@@ -95,7 +95,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                         </ModalBody>
 
                         <ModalFooter>
-                            <Button color="secondary" variant="flat" onPress={onClose} className="font-semibold">
+                            <Button color="secondary" variant="flat" onPress={onClose} className="font-semibold" radius="full">
                                 Done
                             </Button>
                         </ModalFooter>

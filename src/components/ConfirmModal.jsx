@@ -51,8 +51,9 @@ export default function ConfirmModal({
                     <Button
                         size="sm"
                         variant="flat"
-                        className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-default-600"
+                        className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-default-600 dark:text-default-300 font-medium"
                         onPress={onClose}
+                        radius="full"
                     >
                         {cancelText}
                     </Button>
@@ -61,10 +62,11 @@ export default function ConfirmModal({
                         color={isDanger ? 'danger' : 'secondary'}
                         variant="flat"
                         className={isDanger
-                            ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30 font-semibold'
-                            : 'bg-theme-500/20 text-theme-400 hover:bg-theme-500/30 font-semibold'
+                            ? 'bg-red-500/20 text-red-500 dark:text-red-400 hover:bg-red-500/30 font-semibold'
+                            : 'bg-theme-500/20 text-theme-600 dark:text-theme-400 hover:bg-theme-500/30 font-semibold'
                         }
                         onPress={onConfirm}
+                        radius="full"
                     >
                         {confirmText}
                     </Button>

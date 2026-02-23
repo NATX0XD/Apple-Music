@@ -105,8 +105,8 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                         <Button
                                             startContent={<Music size={14} />}
                                             className={`flex-1 font-medium text-xs ${!isVideoMode
-                                                ? 'bg-theme-500/30 text-white border border-theme-500/50 shadow-lg'
-                                                : 'bg-white/5 text-default-400 hover:text-white'
+                                                ? 'bg-theme-500/20 text-theme-600 dark:text-theme-300 border border-theme-500/30 shadow-lg'
+                                                : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
                                                 }`}
                                             onClick={() => handleModeSwitch('audio')}
                                         >
@@ -117,8 +117,8 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                             isLoading={hasVideo === null && !isVideoMode}
                                             isDisabled={hasVideo === false}
                                             className={`flex-1 font-medium text-xs ${isVideoMode
-                                                ? 'bg-pink-500/30 text-white border border-pink-500/50 shadow-lg'
-                                                : 'bg-white/5 text-default-400 hover:text-white'
+                                                ? 'bg-pink-500/20 text-pink-600 dark:text-pink-300 border border-pink-500/30 shadow-lg'
+                                                : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
                                                 }`}
                                             onClick={() => handleModeSwitch('video')}
                                         >
@@ -148,7 +148,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                     />
 
                                     {/* Main artwork */}
-                                    <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl bg-black/50 flex items-center justify-center border border-white/10 z-10">
+                                    <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl bg-black/50 flex items-center justify-center z-10">
                                         {isVideoMode ? (
                                             <video
                                                 ref={player.audioRef}
@@ -209,7 +209,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                             onClick={() => toggleFavorite(currentTrack)}
                                             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isFavorite(currentTrack.trackId)
                                                 ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/25'
-                                                : 'bg-white/10 text-white hover:bg-white/20'
+                                                : 'bg-black/5 dark:bg-white/10 text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/20'
                                                 }`}
                                         >
                                             <Heart size={16} fill={isFavorite(currentTrack.trackId) ? 'currentColor' : 'none'} />
@@ -219,15 +219,15 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                         <div className="relative">
                                             <button
                                                 onClick={() => setShowPlaylistMenu(!showPlaylistMenu)}
-                                                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all bg-white/10 text-white hover:bg-white/20"
+                                                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all bg-black/5 dark:bg-white/10 text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/20"
                                             >
                                                 <ListPlus size={16} />
                                                 <span className="hidden sm:inline">Add to Playlist</span>
                                             </button>
 
                                             {showPlaylistMenu && (
-                                                <div className="absolute top-12 left-0 w-56 bg-[#1a1a24] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 p-2">
-                                                    <div className="p-2 text-xs font-semibold text-default-400 uppercase tracking-wider mb-1">
+                                                <div className="absolute top-12 left-0 w-56 bg-white dark:bg-[#1a1a24] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 p-2">
+                                                    <div className="p-2 text-xs font-semibold text-default-500 dark:text-default-400 uppercase tracking-wider mb-1">
                                                         Select Playlist
                                                     </div>
                                                     <div className="flex flex-col max-h-40 overflow-y-auto custom-scrollbar">
@@ -238,9 +238,9 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                                                     addTrackToPlaylist(pl.id, currentTrack);
                                                                     setShowPlaylistMenu(false);
                                                                 }}
-                                                                className="flex items-center gap-3 px-3 py-2 hover:bg-white/10 rounded-xl text-left transition-colors text-sm font-medium"
+                                                                className="flex items-center gap-3 px-3 py-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-xl text-left transition-colors text-sm font-medium text-black dark:text-white"
                                                             >
-                                                                <Plus size={14} className="text-theme-400 flex-shrink-0" />
+                                                                <Plus size={14} className="text-theme-500 dark:text-theme-400 flex-shrink-0" />
                                                                 <span className="truncate">{pl.name}</span>
                                                             </button>
                                                         )) : (
@@ -260,12 +260,13 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                     <h4 className="text-xs font-bold uppercase tracking-widest text-default-400 mb-3 px-1">
                                         All Songs
                                     </h4>
-                                    <div className="flex-1 overflow-y-auto custom-scrollbar">
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar ">
                                         {tracks && tracks.length > 0 ? (
                                             <TrackList
                                                 tracks={tracks}
                                                 currentTrack={player.currentTrack}
                                                 onPlay={handlePlayTrack}
+                                                pagination={false}
                                             />
                                         ) : (
                                             <div className="flex flex-col items-center justify-center py-12 opacity-40">

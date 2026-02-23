@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ScrollShadow } from '@heroui/react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import PlayerBar from './components/PlayerBar';
@@ -34,8 +34,6 @@ function App() {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [contentType, setContentType] = useState('songs');
-    const [searchTerm, setSearchTerm] = useState('');
     const [tracks, setTracks] = useState([]);
     const [featuredTracks, setFeaturedTracks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,6 +43,10 @@ function App() {
     const { extractColor } = useAmbientColor();
     const { addToHistory } = useHistory();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    const searchTerm = searchParams.get('q') || '';
+    const contentType = searchParams.get('type') || 'songs';
 
     // The Right Panel requirements state we should remove Recently Played. 
     // We can just omit passing it to RightPanel.
@@ -63,20 +65,20 @@ function App() {
         window.addEventListener('resize', handleResize);
 
         const loadFeatured = async () => {
-            setLoading(true);
+            if (!searchParams.get('q')) setLoading(true);
             try {
                 const randomSearch = FEATURED_SEARCHES[Math.floor(Math.random() * FEATURED_SEARCHES.length)];
                 const results = await searchTracks(randomSearch, parseInt(settings.trackLimit) || 25);
                 setFeaturedTracks(results);
-                setTracks(results);
             } catch (err) {
                 console.error('Failed to load featured tracks:', err);
             }
-            setLoading(false);
+            if (!searchParams.get('q')) setLoading(false);
         };
         loadFeatured();
 
         return () => window.removeEventListener('resize', handleResize);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [settings.trackLimit]);
 
     // Extract ambient color when track changes
@@ -100,38 +102,52 @@ function App() {
         }
     }, [settings.themeColor]);
 
+    // Sync Search tracks based on URL
+    useEffect(() => {
+        const fetchResults = async () => {
+            if (searchTerm) {
+                setLoading(true);
+                const limit = parseInt(searchParams.get('limit')) || 20;
+                try {
+                    const results = contentType === 'songs'
+                        ? await searchTracks(searchTerm, limit)
+                        : await searchVideos(searchTerm, limit);
+                    setTracks(results);
+                } catch (err) {
+                    console.error('Search failed:', err);
+                }
+                setLoading(false);
+            } else if (featuredTracks.length > 0) {
+                setTracks(featuredTracks);
+            }
+        };
+
+        fetchResults();
+    }, [searchTerm, contentType, searchParams, featuredTracks]);
+
     // Search handler
-    const handleSearch = useCallback(async (term, limit = 20) => {
-        setSearchTerm(term);
-        setLoading(true);
-        navigate('/'); // Go back to Home to show results
-        try {
-            const results = contentType === 'songs'
-                ? await searchTracks(term, limit)
-                : await searchVideos(term, limit);
-            setTracks(results);
-        } catch (err) {
-            console.error('Search failed:', err);
-        }
-        setLoading(false);
+    const handleSearch = useCallback((term, limit = 20) => {
+        navigate(`/?q=${encodeURIComponent(term)}&type=${contentType}&limit=${limit}`);
     }, [contentType, navigate]);
 
     // Content type change
-    const handleContentTypeChange = useCallback(async (type) => {
-        setContentType(type);
-        setLoading(true);
-        navigate('/');
-        const term = searchTerm || FEATURED_SEARCHES[0];
-        try {
-            const results = type === 'songs'
-                ? await searchTracks(term, 30) // Use limit state ideally
-                : await searchVideos(term, 20);
-            setTracks(results);
-        } catch (err) {
-            console.error('Failed to load:', err);
+    const handleContentTypeChange = useCallback((type) => {
+        const currentLimit = searchParams.get('limit') || 20;
+        if (searchTerm) {
+            navigate(`/?q=${encodeURIComponent(searchTerm)}&type=${type}&limit=${currentLimit}`);
+        } else {
+            navigate(`/?type=${type}`);
         }
-        setLoading(false);
-    }, [searchTerm, navigate]);
+    }, [searchTerm, searchParams, navigate]);
+
+    // Search term update handler (for clearing search)
+    const updateSearchTerm = useCallback((term) => {
+        if (!term) navigate(`/?type=${contentType}`);
+        else {
+            const currentLimit = searchParams.get('limit') || 20;
+            navigate(`/?q=${encodeURIComponent(term)}&type=${contentType}&limit=${currentLimit}`);
+        }
+    }, [contentType, searchParams, navigate]);
 
     const handlePlayTrack = useCallback((track, queue, index) => {
         if (!track.previewUrl) return;
@@ -229,7 +245,7 @@ function App() {
                                         tracks={tracks}
                                         player={player}
                                         handlePlayTrack={handlePlayTrack}
-                                        setSearchTerm={setSearchTerm}
+                                        setSearchTerm={updateSearchTerm}
                                         setTracks={setTracks}
                                     />
                                 } />
@@ -245,57 +261,32 @@ function App() {
                             </Routes>
                         </ScrollShadow>
 
-                        {/* Right Panel or Video Player */}
+                        {/* Right Panel */}
                         <div className="w-[280px] flex-shrink-0 border-l border-white/5 hidden lg:block bg-black/10">
-                            {player.isVideo && player.currentTrack && !isDrawerOpen ? (
-                                <div className="h-full flex flex-col p-4">
-                                    <h3 className="text-sm font-bold mb-4">Now Playing Video</h3>
-                                    <div className="flex-1 w-full bg-black/60 rounded-xl overflow-hidden relative shadow-lg glass-card flex items-center justify-center">
+                            <RightPanel
+                                player={player}
+                                onOpenDrawer={() => setIsDrawerOpen(true)}
+                                onGenreClick={(genre) => {
+                                    handleSearch(genre, 20);
+                                }}
+                                mediaElement={
+                                    player.currentTrack && !(isDrawerOpen && player.isVideo) && (
                                         <video
                                             ref={player.audioRef}
                                             src={player.currentTrack.previewUrl}
-                                            className="w-full h-auto max-h-full object-contain"
+                                            autoPlay
                                             playsInline
-                                            autoPlay
-                                            controls
+                                            crossOrigin="anonymous"
                                             onTimeUpdate={player.handleTimeUpdate}
                                             onLoadedMetadata={player.handleLoadedMetadata}
                                             onEnded={player.handleEnded}
                                             onPlay={() => player.setIsPlaying(true)}
                                             onPause={() => player.setIsPlaying(false)}
+                                            className={player.isVideo ? "w-full aspect-video object-cover" : "hidden"}
                                         />
-                                    </div>
-                                    <div className="mt-4 text-center">
-                                        <p className="text-sm font-medium">{player.currentTrack.trackName}</p>
-                                        <p className="text-xs text-default-400">{player.currentTrack.artistName}</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <>
-                                    <RightPanel
-                                        currentTrack={player.currentTrack}
-                                        onOpenDrawer={() => setIsDrawerOpen(true)}
-                                        onGenreClick={(genre) => {
-                                            setSearchTerm(genre);
-                                            handleSearch(genre, 20);
-                                            navigate('/');
-                                        }}
-                                    />
-                                    {player.currentTrack && !player.isVideo && (
-                                        <audio
-                                            ref={player.audioRef}
-                                            src={player.currentTrack.previewUrl}
-                                            autoPlay
-                                            onTimeUpdate={player.handleTimeUpdate}
-                                            onLoadedMetadata={player.handleLoadedMetadata}
-                                            onEnded={player.handleEnded}
-                                            onPlay={() => player.setIsPlaying(true)}
-                                            onPause={() => player.setIsPlaying(false)}
-                                            className="hidden"
-                                        />
-                                    )}
-                                </>
-                            )}
+                                    )
+                                }
+                            />
                         </div>
 
                         <NowPlayingDrawer

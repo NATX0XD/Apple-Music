@@ -41,7 +41,7 @@ export default function AddPlaylistModal({ isOpen, onClose, onSubmit }) {
                                 <ListPlus size={24} className="text-theme-400" />
                                 New Playlist
                             </h2>
-                            <p className="text-sm text-default-400 font-normal mt-1">Give your new playlist a name.</p>
+                            <p className="text-sm text-default-600 dark:text-default-400 font-normal mt-1">Give your new playlist a name.</p>
                         </ModalHeader>
 
                         <ModalBody>
@@ -52,20 +52,21 @@ export default function AddPlaylistModal({ isOpen, onClose, onSubmit }) {
                                 placeholder="My Awesome Mix"
                                 variant="bordered"
                                 classNames={{
-                                    inputWrapper: "border-white/10 hover:border-white/20 focus-within:!border-theme-500 bg-white/5",
-                                    input: "text-white text-base"
+                                    inputWrapper: "border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 focus-within:!border-theme-500 bg-black/5 dark:bg-white/5",
+                                    input: "text-black dark:text-white text-base"
                                 }}
                             />
                         </ModalBody>
 
                         <ModalFooter>
-                            <Button variant="light" onPress={onClose} className="text-default-400 font-medium">
+                            <Button variant="light" onPress={onClose} className="text-default-600 dark:text-default-400 font-medium" radius="full">
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 className="bg-theme-500 text-white font-semibold shadow-lg shadow-theme-500/20"
                                 isDisabled={!name.trim()}
+                                radius="full"
                             >
                                 Create
                             </Button>

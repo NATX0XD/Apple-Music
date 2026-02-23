@@ -23,7 +23,7 @@ export default function PlayerBar({
     if (!currentTrack) {
         return (
             <div className="apple-glass flex items-center justify-center h-full border-t">
-                <p className="text-default-400 text-sm">Select a song to start playing</p>
+                <p className="text-default-600 dark:text-default-400 text-sm">Select a song to start playing</p>
             </div>
         );
     }
@@ -34,7 +34,7 @@ export default function PlayerBar({
         <div className="apple-glass flex items-center gap-4 px-5 h-full border-t">
             {/* Track Info */}
             <div
-                className="flex items-center gap-3 min-w-0 w-[240px] cursor-pointer group hover:bg-white/5 p-2 -ml-2 rounded-xl transition-colors"
+                className="flex items-center gap-3 min-w-0 w-[240px] cursor-pointer group hover:bg-black/5 dark:hover:bg-white/5 p-2 -ml-2 rounded-xl transition-colors"
                 onClick={onOpenDrawer}
             >
                 <img
@@ -44,8 +44,8 @@ export default function PlayerBar({
                     loading="lazy"
                 />
                 <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate group-hover:text-theme-300 transition-colors">{currentTrack.trackName}</p>
-                    <p className="text-xs text-default-400 truncate">{currentTrack.artistName}</p>
+                    <p className="text-sm font-medium truncate text-black dark:text-white group-hover:text-theme-500 dark:group-hover:text-theme-300 transition-colors">{currentTrack.trackName}</p>
+                    <p className="text-xs text-default-600 dark:text-default-400 truncate">{currentTrack.artistName}</p>
                 </div>
             </div>
 
@@ -54,25 +54,25 @@ export default function PlayerBar({
                 <div className="flex items-center gap-3">
                     <button
                         onClick={onShuffle}
-                        className={`p-1.5 rounded-full transition-colors ${shuffle ? 'text-theme-400' : 'text-default-400 hover:text-white'}`}
+                        className={`p-1.5 rounded-full transition-colors ${shuffle ? 'text-theme-500 dark:text-theme-400' : 'text-default-500 hover:text-black dark:text-default-400 dark:hover:text-white'}`}
                     >
                         <Shuffle size={16} />
                     </button>
-                    <button onClick={onPrev} className="p-1.5 rounded-full text-default-300 hover:text-white transition-colors">
+                    <button onClick={onPrev} className="p-1.5 rounded-full text-default-500 hover:text-black dark:text-default-300 dark:hover:text-white transition-colors">
                         <SkipBack size={18} fill="currentColor" />
                     </button>
                     <button
                         onClick={onTogglePlay}
-                        className="w-9 h-9 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition-transform shadow-lg"
+                        className="w-9 h-9 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center hover:scale-105 transition-transform shadow-lg"
                     >
                         {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
                     </button>
-                    <button onClick={onNext} className="p-1.5 rounded-full text-default-300 hover:text-white transition-colors">
+                    <button onClick={onNext} className="p-1.5 rounded-full text-default-500 hover:text-black dark:text-default-300 dark:hover:text-white transition-colors">
                         <SkipForward size={18} fill="currentColor" />
                     </button>
                     <button
                         onClick={onRepeat}
-                        className={`p-1.5 rounded-full transition-colors ${repeat ? 'text-theme-400' : 'text-default-400 hover:text-white'}`}
+                        className={`p-1.5 rounded-full transition-colors ${repeat ? 'text-theme-500 dark:text-theme-400' : 'text-default-500 hover:text-black dark:text-default-400 dark:hover:text-white'}`}
                     >
                         <Repeat size={16} />
                     </button>
@@ -80,7 +80,7 @@ export default function PlayerBar({
 
                 {/* Progress Bar */}
                 <div className="flex items-center gap-3 w-full">
-                    <span className="text-[10px] text-default-400 w-8 text-right font-mono">
+                    <span className="text-[10px] text-default-600 dark:text-default-400 w-8 text-right font-mono">
                         {formatDuration(currentTime * 1000)}
                     </span>
                     <Slider
@@ -92,13 +92,13 @@ export default function PlayerBar({
                         onChange={(val) => onSeek(val)}
                         className="flex-1"
                         classNames={{
-                            track: "bg-white/10 h-1",
+                            track: "bg-black/10 dark:bg-white/10 h-1",
                             filler: "bg-gradient-to-r from-theme-500 to-pink-500",
-                            thumb: "w-3 h-3 bg-white shadow-md after:w-3 after:h-3",
+                            thumb: "w-3 h-3 bg-black dark:bg-white shadow-md after:w-3 after:h-3",
                         }}
                         aria-label="Song progress"
                     />
-                    <span className="text-[10px] text-default-400 w-8 font-mono text-left">
+                    <span className="text-[10px] text-default-600 dark:text-default-400 w-8 font-mono text-left">
                         {formatDuration(duration * 1000)}
                     </span>
                 </div>
@@ -110,7 +110,7 @@ export default function PlayerBar({
                 <div className="flex items-center gap-1.5">
                     <button
                         onClick={() => onVolumeChange(volume === 0 ? 0.7 : 0)}
-                        className="text-default-400 hover:text-white transition-colors"
+                        className="text-default-600 hover:text-black dark:text-default-400 dark:hover:text-white transition-colors"
                     >
                         {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
                     </button>
@@ -123,9 +123,9 @@ export default function PlayerBar({
                         onChange={(val) => onVolumeChange(val)}
                         className="w-28"
                         classNames={{
-                            track: "bg-white/10 h-1",
+                            track: "bg-black/10 dark:bg-white/10 h-1",
                             filler: "bg-gradient-to-r from-theme-500 to-pink-500",
-                            thumb: "w-3 h-3 bg-white shadow-md after:w-3 after:h-3",
+                            thumb: "w-3 h-3 bg-black dark:bg-white shadow-md after:w-3 after:h-3",
                         }}
                         aria-label="Volume"
                     />
@@ -137,7 +137,7 @@ export default function PlayerBar({
                         href={currentTrack.trackViewUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-theme-500/20 to-pink-500/20 border border-theme-500/20 text-xs font-medium text-theme-300 hover:border-theme-400/40 transition-all"
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-theme-500/10 dark:from-theme-500/20 to-pink-500/10 dark:to-pink-500/20 border border-theme-500/20 text-xs font-medium text-theme-600 dark:text-theme-300 hover:border-theme-500/40 dark:hover:border-theme-400/40 transition-all"
                     >
                         {formatPrice(currentTrack.trackPrice, currentTrack.currency)}
                         <ExternalLink size={10} />

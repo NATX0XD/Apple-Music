@@ -22,9 +22,9 @@
   background: transparent !important;
 }
 
-[data-slot="input-wrapper"] {
+/* [data-slot="input-wrapper"] {
   background: rgba(255, 255, 255, 0.1) !important;
-}
+} */
 
 /* Remove focus outline/ring on all inputs */
 input:focus,
@@ -113,110 +113,6 @@ body,
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(0, 0, 0, 0.05);
   }
-
-  .light .glass-card {
-    background: rgba(255, 255, 255, 0.6);
-    border-color: rgba(0, 0, 0, 0.05);
-  }
-
-  .light .glass-card:hover {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .light .text-white {
-    color: #111827 !important;
-  }
-
-  .light .text-white\/90 {
-    color: rgba(17, 24, 39, 0.9) !important;
-  }
-
-  .light .text-white\/80 {
-    color: rgba(17, 24, 39, 0.8) !important;
-  }
-
-  .light .text-white\/70 {
-    color: rgba(17, 24, 39, 0.7) !important;
-  }
-
-  .light .text-white\/60 {
-    color: rgba(17, 24, 39, 0.6) !important;
-  }
-
-  .light .text-white\/50 {
-    color: rgba(17, 24, 39, 0.5) !important;
-  }
-
-  .light .text-default-200 {
-    color: #9ca3af !important;
-  }
-
-  .light .text-default-300 {
-    color: #6b7280 !important;
-  }
-
-  .light .text-default-400 {
-    color: #4b5563 !important;
-  }
-
-  .light .text-default-500 {
-    color: #374151 !important;
-  }
-
-  .light .bg-white {
-    background-color: #111827 !important;
-    color: #fff !important;
-  }
-
-  /* Invert solid white buttons to black */
-  /* Re-invert icons inside inverted buttons if text was inherited, but normally icon fills use currentColor */
-
-  .light .bg-white\/5 {
-    background-color: rgba(0, 0, 0, 0.04) !important;
-  }
-
-  .light .bg-white\/10 {
-    background-color: rgba(0, 0, 0, 0.08) !important;
-  }
-
-  .light .bg-white\/20 {
-    background-color: rgba(0, 0, 0, 0.12) !important;
-  }
-
-  .light .hover\:bg-white\/5:hover {
-    background-color: rgba(0, 0, 0, 0.05) !important;
-  }
-
-  .light .hover\:bg-white\/10:hover {
-    background-color: rgba(0, 0, 0, 0.08) !important;
-  }
-
-  .light .hover\:bg-white\/20:hover {
-    background-color: rgba(0, 0, 0, 0.12) !important;
-  }
-
-  .light .hover\:bg-white\/30:hover {
-    background-color: rgba(0, 0, 0, 0.16) !important;
-  }
-
-  .light .border-white\/5 {
-    border-color: rgba(0, 0, 0, 0.05) !important;
-  }
-
-  .light .border-white\/10 {
-    border-color: rgba(0, 0, 0, 0.1) !important;
-  }
-
-  .light .border-white\/15 {
-    border-color: rgba(0, 0, 0, 0.12) !important;
-  }
-
-  .light .border-white\/20 {
-    border-color: rgba(0, 0, 0, 0.15) !important;
-  }
-
-  /* Ensure text-theme overrides are still respected by raising specificity if needed, but normally Tailwind outputs are ok. */
 
   .ambient-glow {
     box-shadow:

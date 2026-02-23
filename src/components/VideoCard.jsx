@@ -44,12 +44,12 @@ export default function VideoCard({ track, onPlay }) {
 
             {/* Info */}
             <div>
-                <p className="text-sm font-semibold truncate mb-0.5">{track.trackName}</p>
-                <p className="text-xs text-default-400 truncate mb-2">{track.artistName}</p>
+                <p className="text-sm font-semibold text-black dark:text-white truncate mb-0.5">{track.trackName}</p>
+                <p className="text-xs text-default-600 dark:text-default-400 truncate mb-2">{track.artistName}</p>
 
                 <div className="flex items-center justify-between">
                     {track.trackPrice !== undefined && track.trackPrice >= 0 && (
-                        <span className="text-[10px] font-medium text-pink-300 bg-pink-500/10 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-medium text-pink-600 dark:text-pink-300 bg-pink-500/10 dark:bg-pink-500/20 px-2 py-0.5 rounded-full">
                             {formatPrice(track.trackPrice, track.currency)}
                         </span>
                     )}

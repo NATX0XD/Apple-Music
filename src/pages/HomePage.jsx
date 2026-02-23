@@ -38,10 +38,10 @@ export default function HomePage({
 
             {/* Section Title */}
             <div className="flex items-center justify-between mb-4 mt-6">
-                <h2 className="text-xl font-bold">
+                <h2 className="text-xl font-bold text-black dark:text-white">
                     {searchTerm
-                        ? `Results for "${searchTerm}"`
-                        : contentType === 'songs' ? 'Trending Songs' : 'Music Videos'}
+                        ? `Results for "${searchTerm}" (${tracks.length} track found)`
+                        : contentType === 'songs' ? `Trending Songs (${tracks.length} track found)` : `Music Videos (${tracks.length} track found)`}
                 </h2>
                 {searchTerm && (
                     <button
@@ -49,7 +49,7 @@ export default function HomePage({
                             setSearchTerm('');
                             setTracks(featuredTracks);
                         }}
-                        className="text-xs text-theme-400 hover:text-theme-300 transition-colors"
+                        className="text-xs text-theme-600 dark:text-theme-400 hover:text-theme-500 dark:hover:text-theme-300 transition-colors"
                     >
                         Clear search
                     </button>
@@ -82,7 +82,7 @@ export default function HomePage({
             {/* Playlist Table (songs only) */}
             {contentType === 'songs' && tracks.length > 0 && (
                 <div className="mb-6">
-                    <h3 className="text-lg font-bold mb-3">All Songs list</h3>
+                    <h3 className="text-lg font-bold text-black dark:text-white mb-3">All Songs list</h3>
                     <TrackList
                         tracks={tracks}
                         currentTrack={player.currentTrack}
@@ -93,8 +93,8 @@ export default function HomePage({
 
             {tracks.length === 0 && (
                 <div className="text-center py-16">
-                    <p className="text-default-400 text-lg">No results found</p>
-                    <p className="text-default-500 text-sm mt-1">Try a different search term</p>
+                    <p className="text-default-600 dark:text-default-400 text-lg">No results found</p>
+                    <p className="text-default-500 dark:text-default-500 text-sm mt-1">Try a different search term</p>
                 </div>
             )}
         </div>
