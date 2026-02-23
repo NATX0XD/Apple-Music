@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Menu, ChevronLeft, ChevronRight, Search, Music, Video, Clock } from 'lucide-react';
 import { Input, Button, ButtonGroup } from '@heroui/react';
 import { useRecentSearches } from '../hooks/useStorage';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header({
     searchTerm,
@@ -10,6 +11,7 @@ export default function Header({
     onContentTypeChange,
     onToggleSidebar
 }) {
+    const navigate = useNavigate();
     const [value, setValue] = useState(searchTerm || '');
     const [limit, setLimit] = useState(20);
     const [showRecent, setShowRecent] = useState(false);
@@ -130,7 +132,7 @@ export default function Header({
                     <Button
                         startContent={<Music size={14} />}
                         className={`text-xs font-medium ${contentType === 'songs'
-                            ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                            ? 'bg-theme-500/20 text-theme-300 border border-theme-500/30'
                             : 'bg-white/5 text-default-400 hover:text-white'
                             }`}
                         onClick={() => onContentTypeChange('songs')}

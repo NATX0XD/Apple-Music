@@ -9,7 +9,7 @@ export default function TrackCard({ track, isPlaying, onPlay }) {
     return (
         <div
             className={`glass-card p-3 cursor-pointer group relative overflow-hidden
-        ${isPlaying ? 'ring-1 ring-purple-500/40 ambient-glow' : ''}`}
+        ${isPlaying ? 'ring-1 ring-theme-500/40 ambient-glow' : ''}`}
             onClick={() => onPlay(track)}
         >
             {/* Artwork */}
@@ -26,7 +26,7 @@ export default function TrackCard({ track, isPlaying, onPlay }) {
           ${isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
                         {isPlaying ? (
-                            <div className="playing-indicator text-purple-600">
+                            <div className="playing-indicator text-theme-600">
                                 <span></span><span></span><span></span><span></span>
                             </div>
                         ) : (
@@ -52,7 +52,7 @@ export default function TrackCard({ track, isPlaying, onPlay }) {
 
                 <div className="flex items-center justify-between">
                     {track.trackPrice !== undefined && track.trackPrice >= 0 && (
-                        <span className="text-[10px] font-medium text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-medium text-theme-300 bg-theme-500/10 px-2 py-0.5 rounded-full">
                             {formatPrice(track.trackPrice, track.currency)}
                         </span>
                     )}

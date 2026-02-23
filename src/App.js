@@ -20,6 +20,18 @@ function App() {
     const { settings, updateSettings } = useSettings();
     const isDark = settings.isDark !== false; // Default true
 
+    const themeBgColors = {
+        purple: { dark: 'bg-[#120a1f]', light: 'bg-[#f8f5fc]' },
+        pink: { dark: 'bg-[#1f0a12]', light: 'bg-[#fcf5f8]' },
+        blue: { dark: 'bg-[#0a101f]', light: 'bg-[#f5f7fc]' },
+        green: { dark: 'bg-[#0a1f10]', light: 'bg-[#f5fcf6]' },
+        orange: { dark: 'bg-[#1f100a]', light: 'bg-[#fcf7f5]' },
+        red: { dark: 'bg-[#1f0a0a]', light: 'bg-[#fcf5f5]' },
+        default: { dark: 'bg-[#0a0a0f]', light: 'bg-[#fcfcfc]' }
+    };
+    const currentThemeBg = themeBgColors[settings.themeColor] || themeBgColors.default;
+    const bgClass = isDark ? currentThemeBg.dark : currentThemeBg.light;
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [contentType, setContentType] = useState('songs');
@@ -77,7 +89,7 @@ function App() {
 
     // Theme toggle
     useEffect(() => {
-        document.documentElement.className = isDark ? `dark theme-${settings.themeColor || 'purple'}` : `light theme-${settings.themeColor || 'purple'}`;
+        document.documentElement.className = isDark ? `dark theme-${settings.themeColor || 'theme'}` : `light theme-${settings.themeColor || 'theme'}`;
         // Set body background programmatically or let class handle it
     }, [isDark, settings.themeColor]);
 
@@ -170,7 +182,7 @@ function App() {
     }, [player]);
 
     return (
-        <div className={`h-screen w-screen overflow-hidden ${isDark ? 'dark bg-[#0a0a0f]' : 'light bg-[#f5f5f7]'}`}>
+        <div className={`h-screen w-screen overflow-hidden ${isDark ? 'dark ' : 'light '} ${bgClass}`}>
             <div className="fixed inset-0 pointer-events-none ambient-bg transition-all duration-1000" />
 
             <div className="relative z-10 h-full flex">
@@ -183,7 +195,7 @@ function App() {
                 )}
 
                 <div
-                    className={`z-50 flex-shrink-0 transition-all duration-300 absolute lg:relative h-full overflow-hidden ${isSidebarOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full lg:translate-x-0 lg:w-0'
+                    className={`z-50 flex-shrink-0 transition-all duration-300 absolute lg:relative h-full overflow-hidden ${isSidebarOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full w-[260px] lg:translate-x-0 lg:w-[80px]'
                         }`}
                 >
                     <Sidebar

@@ -52,7 +52,7 @@ export function useAmbientColor() {
                     document.documentElement.style.setProperty('--ambient-b', b);
                 }
             } catch (e) {
-                // CORS error fallback - use a nice default purple
+                // CORS error fallback - use a nice default theme
                 document.documentElement.style.setProperty('--ambient-r', 108);
                 document.documentElement.style.setProperty('--ambient-g', 92);
                 document.documentElement.style.setProperty('--ambient-b', 231);

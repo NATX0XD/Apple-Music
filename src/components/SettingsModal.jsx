@@ -17,12 +17,25 @@ export default function SettingsModal({ isOpen, onClose }) {
     const isDark = settings.isDark !== false;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} backdrop="blur" classNames={{
-            base: "bg-[#1a1a24] text-white border border-white/10",
-            header: "border-b border-white/5",
-            footer: "border-t border-white/5",
-            closeButton: "hover:bg-white/10 active:bg-white/5 transition-colors"
-        }}>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            backdrop="blur"
+            placement="bottom"
+            motionProps={{
+                variants: {
+                    enter: { y: 0, opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
+                    exit: { y: 20, opacity: 0, transition: { duration: 0.2, ease: 'easeIn' } },
+                }
+            }}
+            classNames={{
+                base: "apple-glass rounded-t-3xl rounded-b-none sm:rounded-2xl mx-0 sm:mx-6 mb-0 sm:mb-8 max-w-lg",
+                header: "border-b border-black/5 dark:border-white/5",
+                body: "py-6",
+                footer: "border-t border-black/5 dark:border-white/5",
+                closeButton: "hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/5 transition-colors"
+            }}
+        >
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -38,7 +51,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                                 <div className="grid grid-cols-2 gap-3">
                                     <button
                                         onClick={() => updateSettings({ isDark: false })}
-                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${!isDark ? 'border-purple-500 bg-purple-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
+                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${!isDark ? 'border-theme-500 bg-theme-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
                                             }`}
                                     >
                                         <Sun size={24} className="mb-2" />
@@ -46,7 +59,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                                     </button>
                                     <button
                                         onClick={() => updateSettings({ isDark: true })}
-                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${isDark ? 'border-purple-500 bg-purple-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
+                                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${isDark ? 'border-theme-500 bg-theme-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
                                             }`}
                                     >
                                         <Moon size={24} className="mb-2" />
@@ -64,8 +77,8 @@ export default function SettingsModal({ isOpen, onClose }) {
                                             key={color.value}
                                             onClick={() => updateSettings({ themeColor: color.value })}
                                             className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${settings.themeColor === color.value
-                                                    ? 'border-white/20 bg-white/10 shadow-lg'
-                                                    : 'border-white/5 bg-white/5 hover:bg-white/10'
+                                                ? 'border-white/20 bg-white/10 shadow-lg'
+                                                : 'border-white/5 bg-white/5 hover:bg-white/10'
                                                 }`}
                                         >
                                             <div

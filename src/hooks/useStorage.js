@@ -19,11 +19,33 @@ function useLocalStorage(key, initialValue) {
             setStoredValue(valueToStore);
             if (typeof window !== "undefined") {
                 window.localStorage.setItem(key, JSON.stringify(valueToStore));
+                window.dispatchEvent(new Event("local-storage-sync"));
             }
         } catch (error) {
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            try {
+                const item = window.localStorage.getItem(key);
+                if (item) {
+                    setStoredValue(JSON.parse(item));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('local-storage-sync', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('local-storage-sync', handleStorageChange);
+        };
+    }, [key]);
 
     return [storedValue, setValue];
 }

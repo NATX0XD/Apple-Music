@@ -29,13 +29,13 @@ export default function TrackList({ tracks, currentTrack, onPlay, playlistAction
                             className={`grid gap-2 px-4 py-2.5 items-center cursor-pointer 
                 transition-all duration-150 group
                 ${playlistActions ? 'grid-cols-[40px_1fr_1fr_80px_80px_40px]' : 'grid-cols-[40px_1fr_1fr_80px_80px]'}
-                ${isActive ? 'bg-purple-500/10' : 'hover:bg-white/[0.03]'}`}
+                ${isActive ? 'bg-theme-500/10' : 'hover:bg-white/[0.03]'}`}
                             onClick={() => onPlay(track, tracks, index)}
                         >
                             {/* Number / Play icon */}
                             <div className="flex items-center justify-center">
                                 {isActive ? (
-                                    <div className="playing-indicator text-purple-400">
+                                    <div className="playing-indicator text-theme-400">
                                         <span></span><span></span><span></span><span></span>
                                     </div>
                                 ) : (
@@ -55,7 +55,7 @@ export default function TrackList({ tracks, currentTrack, onPlay, playlistAction
                                     loading="lazy"
                                 />
                                 <div className="min-w-0">
-                                    <p className={`text-sm truncate ${isActive ? 'text-purple-400 font-semibold' : 'font-medium'}`}>
+                                    <p className={`text-sm truncate ${isActive ? 'text-theme-400 font-semibold' : 'font-medium'}`}>
                                         {track.trackName}
                                     </p>
                                     <p className="text-[11px] text-default-400 truncate">{track.artistName}</p>
@@ -78,7 +78,7 @@ export default function TrackList({ tracks, currentTrack, onPlay, playlistAction
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={(e) => e.stopPropagation()}
-                                        className="inline-flex items-center gap-0.5 text-[10px] text-purple-300 hover:text-purple-200 transition-colors"
+                                        className="inline-flex items-center gap-0.5 text-[10px] text-theme-300 hover:text-theme-200 transition-colors"
                                     >
                                         {formatPrice(track.trackPrice, track.currency)}
                                         <ExternalLink size={8} />

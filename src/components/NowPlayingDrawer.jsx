@@ -92,7 +92,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                 >
                     {/* Header with Close Button */}
                     <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
-                        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+                        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-theme-400 to-pink-400">
                             Now Playing
                         </h2>
                         <button
@@ -113,7 +113,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                     <Button
                                         startContent={<Music size={16} />}
                                         className={`flex-1 font-medium ${!isVideoMode
-                                            ? 'bg-purple-500/30 text-white border border-purple-500/50 shadow-lg'
+                                            ? 'bg-theme-500/30 text-white border border-theme-500/50 shadow-lg'
                                             : 'bg-white/5 text-default-400 hover:text-white'
                                             }`}
                                         onClick={() => handleModeSwitch('audio')}
@@ -170,7 +170,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                 <h3 className="text-4xl font-extrabold mb-3 tracking-tight truncate">
                                     {currentTrack.trackName}
                                 </h3>
-                                <p className="text-2xl text-purple-400 font-semibold truncate opacity-90">
+                                <p className="text-2xl text-theme-400 font-semibold truncate opacity-90">
                                     {currentTrack.artistName}
                                 </p>
                                 {currentTrack.collectionName && (
@@ -184,8 +184,8 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                     <button
                                         onClick={() => toggleFavorite(currentTrack)}
                                         className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all shadow-md ${isFavorite(currentTrack.trackId)
-                                                ? 'bg-pink-500 text-white'
-                                                : 'bg-white/10 text-default-300 hover:bg-white/20'
+                                            ? 'bg-pink-500 text-white shadow-pink-500/25'
+                                            : 'bg-white/20 text-white hover:bg-white/30'
                                             }`}
                                     >
                                         <Heart size={18} fill={isFavorite(currentTrack.trackId) ? 'currentColor' : 'none'} />
@@ -195,7 +195,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                     <div className="relative">
                                         <button
                                             onClick={() => setShowPlaylistMenu(!showPlaylistMenu)}
-                                            className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all shadow-md bg-white/10 text-default-300 hover:bg-white/20"
+                                            className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all shadow-md bg-white/20 text-white hover:bg-white/30"
                                         >
                                             <ListPlus size={18} />
                                             Add to Playlist
@@ -216,7 +216,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                                             }}
                                                             className="flex items-center gap-3 px-3 py-2 hover:bg-white/10 rounded-xl text-left transition-colors text-sm font-medium"
                                                         >
-                                                            <Plus size={14} className="text-purple-400 flex-shrink-0" />
+                                                            <Plus size={14} className="text-theme-400 flex-shrink-0" />
                                                             <span className="truncate">{pl.name}</span>
                                                         </button>
                                                     )) : (
@@ -243,14 +243,17 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                         </span>
                                     </div>
 
-                                    <ScrollShadow className="flex-1 overflow-y-auto pr-3 space-y-2">
-                                        {player.queue.length > 0 && player.queue.slice(player.queueIndex + 1).map((track, idx) => (
+                                    <ScrollShadow className="flex-1 overflow-y-auto pr-3 space-y-1 custom-scrollbar">
+                                        {player.queue.slice(player.queueIndex + 1).map((track, idx) => (
                                             <button
                                                 key={`${track.trackId}-${idx}`}
                                                 onClick={() => player.playTrack(track, player.queue, player.queueIndex + 1 + idx)}
-                                                className="w-full flex items-center gap-4 hover:bg-white/10 p-3 rounded-xl transition-all group text-left hover:scale-[1.01] active:scale-[0.99]"
+                                                className="w-full flex items-center gap-4 hover:bg-white/10 p-2 rounded-xl transition-all group text-left"
                                             >
-                                                <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 shadow-md">
+                                                <span className="w-4 text-center text-xs font-semibold text-default-400 group-hover:text-white transition-colors">
+                                                    {idx + 1}
+                                                </span>
+                                                <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-md">
                                                     <img
                                                         src={getArtwork(track.artworkUrl100, 150)}
                                                         alt={track.trackName}
@@ -258,14 +261,14 @@ export default function NowPlayingDrawer({ isOpen, onClose, player }) {
                                                         loading="lazy"
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Play size={16} fill="currentColor" />
+                                                        <Play size={14} fill="currentColor" />
                                                     </div>
                                                 </div>
-                                                <div className="flex-1 min-w-0 pr-4">
-                                                    <p className="text-base font-semibold truncate leading-tight group-hover:text-purple-300 transition-colors">
+                                                <div className="flex-1 min-w-0 pr-2">
+                                                    <p className="text-sm font-bold truncate leading-tight group-hover:text-theme-300 transition-colors">
                                                         {track.trackName}
                                                     </p>
-                                                    <p className="text-sm text-default-400 truncate mt-1">
+                                                    <p className="text-xs text-default-400 truncate mt-0.5">
                                                         {track.artistName}
                                                     </p>
                                                 </div>

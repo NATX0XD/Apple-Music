@@ -1,7 +1,7 @@
 import React from 'react';
-import { Chip, Image, ScrollShadow } from '@heroui/react';
-import { TrendingUp, Clock } from 'lucide-react';
-import { GENRE_TAGS, getArtwork, formatDuration } from '../services/itunesApi';
+import { Chip, ScrollShadow } from '@heroui/react';
+import { TrendingUp, Play } from 'lucide-react';
+import { GENRE_TAGS, getArtwork } from '../services/itunesApi';
 
 export default function RightPanel({ onGenreClick, currentTrack, onOpenDrawer }) {
     return (
@@ -10,7 +10,7 @@ export default function RightPanel({ onGenreClick, currentTrack, onOpenDrawer })
                 {/* Genre Tags */}
                 <div>
                     <div className="flex items-center gap-2 mb-3">
-                        <TrendingUp size={16} className="text-purple-400" />
+                        <TrendingUp size={16} className="text-theme-400" />
                         <h3 className="text-sm font-semibold">Trending Tags</h3>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -35,7 +35,7 @@ export default function RightPanel({ onGenreClick, currentTrack, onOpenDrawer })
                         className="glass-card p-3 ambient-glow cursor-pointer hover:bg-white/10 transition-colors group"
                         onClick={onOpenDrawer}
                     >
-                        <p className="text-[10px] uppercase tracking-wider text-purple-400 font-semibold mb-2 flex items-center justify-between">
+                        <p className="text-[10px] uppercase tracking-wider text-theme-400 font-semibold mb-2 flex items-center justify-between">
                             <span>Now Playing</span>
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity">Show Queue</span>
                         </p>
@@ -53,10 +53,10 @@ export default function RightPanel({ onGenreClick, currentTrack, onOpenDrawer })
 
                         {/* Playing indicator */}
                         <div className="flex items-center gap-2 mt-3">
-                            <div className="playing-indicator text-purple-400">
+                            <div className="playing-indicator text-theme-400">
                                 <span></span><span></span><span></span><span></span>
                             </div>
-                            <span className="text-[10px] text-purple-400 font-medium">Playing</span>
+                            <span className="text-[10px] text-theme-400 font-medium">Playing</span>
                         </div>
                     </div>
                 )}

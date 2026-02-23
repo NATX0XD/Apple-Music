@@ -25,7 +25,7 @@ export default function HomePage({
     }
 
     const heroTrack = featuredTracks[0];
-    const gridTracks = contentType === 'songs' ? tracks.slice(0, 8) : tracks;
+    const gridTracks = contentType === 'songs' ? tracks.slice(0, 10) : tracks;
     const listTracks = contentType === 'songs' ? tracks.slice(0, 20) : [];
 
     return (
@@ -48,7 +48,7 @@ export default function HomePage({
                 {searchTerm && (
                     <button
                         onClick={() => { setSearchTerm(''); setTracks(featuredTracks); }}
-                        className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                        className="text-xs text-theme-400 hover:text-theme-300 transition-colors"
                     >
                         Clear search
                     </button>
@@ -57,8 +57,8 @@ export default function HomePage({
 
             {/* Grid Cards */}
             <div className={`grid gap-4 mb-8 ${contentType === 'videos'
-                ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
+                ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
                 }`}>
                 {gridTracks.map((track) =>
                     contentType === 'videos' ? (

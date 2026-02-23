@@ -44,7 +44,7 @@ export default function PlayerBar({
                     loading="lazy"
                 />
                 <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate group-hover:text-purple-300 transition-colors">{currentTrack.trackName}</p>
+                    <p className="text-sm font-medium truncate group-hover:text-theme-300 transition-colors">{currentTrack.trackName}</p>
                     <p className="text-xs text-default-400 truncate">{currentTrack.artistName}</p>
                 </div>
             </div>
@@ -54,7 +54,7 @@ export default function PlayerBar({
                 <div className="flex items-center gap-3">
                     <button
                         onClick={onShuffle}
-                        className={`p-1.5 rounded-full transition-colors ${shuffle ? 'text-purple-400' : 'text-default-400 hover:text-white'}`}
+                        className={`p-1.5 rounded-full transition-colors ${shuffle ? 'text-theme-400' : 'text-default-400 hover:text-white'}`}
                     >
                         <Shuffle size={16} />
                     </button>
@@ -72,14 +72,14 @@ export default function PlayerBar({
                     </button>
                     <button
                         onClick={onRepeat}
-                        className={`p-1.5 rounded-full transition-colors ${repeat ? 'text-purple-400' : 'text-default-400 hover:text-white'}`}
+                        className={`p-1.5 rounded-full transition-colors ${repeat ? 'text-theme-400' : 'text-default-400 hover:text-white'}`}
                     >
                         <Repeat size={16} />
                     </button>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="flex items-center gap-2 w-full">
+                <div className="flex items-center gap-3 w-full">
                     <span className="text-[10px] text-default-400 w-8 text-right font-mono">
                         {formatDuration(currentTime * 1000)}
                     </span>
@@ -93,12 +93,12 @@ export default function PlayerBar({
                         className="flex-1"
                         classNames={{
                             track: "bg-white/10 h-1",
-                            filler: "bg-gradient-to-r from-purple-500 to-pink-500",
+                            filler: "bg-gradient-to-r from-theme-500 to-pink-500",
                             thumb: "w-3 h-3 bg-white shadow-md after:w-3 after:h-3",
                         }}
                         aria-label="Song progress"
                     />
-                    <span className="text-[10px] text-default-400 w-8 font-mono">
+                    <span className="text-[10px] text-default-400 w-8 font-mono text-left">
                         {formatDuration(duration * 1000)}
                     </span>
                 </div>
@@ -121,11 +121,11 @@ export default function PlayerBar({
                         minValue={0}
                         value={volume}
                         onChange={(val) => onVolumeChange(val)}
-                        className="w-20"
+                        className="w-24"
                         classNames={{
                             track: "bg-white/10 h-1",
-                            filler: "bg-white/60",
-                            thumb: "w-2.5 h-2.5 bg-white after:w-2.5 after:h-2.5",
+                            filler: "bg-gradient-to-r from-theme-500 to-pink-500",
+                            thumb: "w-3 h-3 bg-white shadow-md after:w-3 after:h-3",
                         }}
                         aria-label="Volume"
                     />
@@ -137,7 +137,7 @@ export default function PlayerBar({
                         href={currentTrack.trackViewUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/20 text-xs font-medium text-purple-300 hover:border-purple-400/40 transition-all"
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-theme-500/20 to-pink-500/20 border border-theme-500/20 text-xs font-medium text-theme-300 hover:border-theme-400/40 transition-all"
                     >
                         {formatPrice(currentTrack.trackPrice, currentTrack.currency)}
                         <ExternalLink size={10} />

@@ -38,3 +38,10 @@
 - responsive design when it big screen it should chang Trending Songs grid more that 3 or 4 item in horizontal it should follow size screen 
   and ARTIST banner too it should follow size screen if big screen it should have 2 banner in horizontal
 - playlist list icon in sidebar menu should change to small image of playlist 
+- volume bar in player bar not working and style not good and sound not change when i slide it 
+- rightpanel เอาที่แสดง music video ออก คือผมจะให้แกเการแสดงผลตอนที่มันแสดง วิดีโอด้านข้าง และ แก้ modal style ด้วย ตอนนี้มันมันสวยเลย 
+- ถ้าเป้นคอนเฟร์ม เพิ่มข้อมูล  modal ควรอยู่ตรงกลางไม่ควรเต็มจอ
+- ส่วน setting modal ให้แสดงขึ้นมาจากด้านล่างได้
+- และ setting ACCENT COLOR ควรจะเปลี่ยนธีมสีทั้ง แอป คือพิ้นหลังมันยังออกสีม่วงน้ำเงินอยู่เลย ควรเป็ลี่ยนตรงนี้ด้วย 
+- แก้ไข style color when light mode ตอนนี้สีมันกลมกลืนจนไม่ชัดเจน 
+- รูปภาพPLAYLIST อยากให้ทำเป็น stack รูปภาพ ล่าสุดของเพลงที่เพิ่มมา 4 เพลง รวมเป็นรูปเดียวแล้วเอามาเป็น icon ใช้ lib นอก ได้

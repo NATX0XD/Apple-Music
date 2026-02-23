@@ -3,6 +3,7 @@ import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import TrackList from '../components/TrackList';
 import { usePlaylists } from '../hooks/useStorage';
 import { Library, Trash2, Music } from 'lucide-react';
+import PlaylistCover from '../components/PlaylistCover';
 
 export default function PlaylistPage({ player, handlePlayTrack }) {
     const { slug } = useParams();
@@ -26,8 +27,13 @@ export default function PlaylistPage({ player, handlePlayTrack }) {
         <div className="animate-fade-in max-w-5xl mx-auto">
             {/* Header info */}
             <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 mb-10 pt-6">
-                <div className="w-48 h-48 bg-gradient-to-br from-purple-500/40 to-pink-500/40 rounded-2xl shadow-2xl flex items-center justify-center border border-white/10 shrink-0">
-                    <Library size={64} className="text-white/80" />
+                <div className="w-48 h-48 bg-gradient-to-br from-theme-500/20 to-pink-500/20 rounded-2xl shadow-xl flex items-center justify-center border border-white/10 shrink-0 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-theme-500/10 mix-blend-overlay z-10 pointer-events-none" />
+                    <PlaylistCover
+                        tracks={playlist.tracks}
+                        className="w-full h-full object-cover"
+                        iconSize={64}
+                    />
                 </div>
                 <div className="flex-1">
                     <p className="uppercase text-xs font-bold tracking-widest text-default-500 mb-2">Playlist</p>
@@ -47,7 +53,7 @@ export default function PlaylistPage({ player, handlePlayTrack }) {
             </div>
 
             {playlist.tracks.length > 0 ? (
-                <div className="bg-white/5 border border-white/5 rounded-2xl p-6 shadow-xl glass-card">
+                <div className="mt-8">
                     <TrackList
                         tracks={playlist.tracks}
                         currentTrack={player.currentTrack}

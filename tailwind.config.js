@@ -8,6 +8,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        theme: {
+          300: "rgb(var(--color-theme-300) / <alpha-value>)",
+          400: "rgb(var(--color-theme-400) / <alpha-value>)",
+          500: "rgb(var(--color-theme-500) / <alpha-value>)",
+          600: "rgb(var(--color-theme-600) / <alpha-value>)",
+        }
+      },
       fontFamily: {
         sans: ['Inter', 'SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },

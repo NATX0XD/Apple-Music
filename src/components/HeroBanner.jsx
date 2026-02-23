@@ -26,7 +26,7 @@ export default function HeroBanner({ track, onPlay }) {
             {/* Content */}
             <div className="relative z-10 flex h-full p-6">
                 <div className="flex-1 flex flex-col justify-end">
-                    <span className="text-[10px] uppercase tracking-widest text-purple-400 font-semibold mb-1">
+                    <span className="text-[10px] uppercase tracking-widest text-theme-400 font-semibold mb-1">
                         Artist
                     </span>
                     <h2 className="text-3xl font-extrabold text-white text-shadow-lg mb-1 leading-tight">
@@ -37,7 +37,7 @@ export default function HeroBanner({ track, onPlay }) {
                     <div className="flex items-center gap-3">
                         <Button
                             size="sm"
-                            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-lg shadow-purple-500/25 px-5"
+                            className="bg-gradient-to-r from-theme-500 to-pink-500 text-white font-semibold shadow-lg shadow-theme-500/25 px-5"
                             startContent={<Play size={14} fill="white" />}
                             onClick={() => onPlay(track)}
                         >
@@ -55,11 +55,11 @@ export default function HeroBanner({ track, onPlay }) {
                 </div>
 
                 {/* Artwork */}
-                <div className="hidden sm:flex items-end justify-end">
+                <div className="hidden sm:flex items-center justify-end h-full">
                     <Image
                         src={artwork}
                         alt={track.trackName}
-                        className="w-[180px] h-[180px] rounded-xl object-cover shadow-2xl group-hover:scale-105 transition-transform duration-500"
+                        className="w-[200px] h-[200px] rounded-xl object-cover shadow-2xl group-hover:scale-105 transition-transform duration-500"
                     />
                 </div>
             </div>
