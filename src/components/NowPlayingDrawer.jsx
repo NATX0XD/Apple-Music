@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Music, Video, Play, Heart, ListPlus, Plus } from 'lucide-react';
-import { Button, ButtonGroup, ScrollShadow } from '@heroui/react';
+import { ChevronDown, Music, Video, Heart, ListPlus, Plus } from 'lucide-react';
+import { Button, ButtonGroup } from '@heroui/react';
 import TrackList from './TrackList';
-import { getArtwork, searchVideos, formatDuration } from '../services/itunesApi';
+import { getArtwork, searchVideos } from '../services/itunesApi';
 import { useFavorites, usePlaylists } from '../hooks/useStorage';
 
 export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, handlePlayTrack }) {
