@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu, ChevronLeft, ChevronRight, Search, Music, Video, Clock, X } from 'lucide-react';
-import { Input, Button, ButtonGroup } from '@heroui/react';
+import { Input, Button } from '@heroui/react';
 import { useRecentSearches } from '../hooks/useStorage';
 import profileImg from '../images/68-020415-1032-5.JPG';
 export default function Header({
