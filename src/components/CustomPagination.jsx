@@ -91,7 +91,7 @@ export default function CustomPagination({
                             }}
                         />
 
-                        {/* Next button */}
+                        {/* Nextt button */}
                         <button
                             onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
                             disabled={currentPage >= totalPages}

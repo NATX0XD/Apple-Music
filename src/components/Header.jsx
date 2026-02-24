@@ -23,7 +23,6 @@ export default function Header({
     const searchRef = useRef(null);
     const navigate = useNavigate();
 
-    // Close recent searches dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -141,7 +140,6 @@ export default function Header({
                         value={limit}
                         onChange={(e) => {
                             const val = e.target.value;
-                            // Allow empty string while typing
                             if (val === '') {
                                 setLimit('');
                             } else {
@@ -149,7 +147,6 @@ export default function Header({
                             }
                         }}
                         onBlur={() => {
-                            // Clamp on blur
                             const num = Number(limit);
                             if (!num || num < 1) setLimit(1);
                             else if (num > 50) setLimit(50);

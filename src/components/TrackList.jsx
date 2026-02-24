@@ -133,7 +133,7 @@ export default function TrackList({ tracks, currentTrack, onPlay, playlistAction
                     rowsPerPage={rowsPerPage}
                     onRowsPerPageChange={(rows) => {
                         setRowsPerPage(rows);
-                        setCurrentPage(1); // Reset to page 1 when changing rows per page
+                        setCurrentPage(1);
                     }}
                     totalItems={tracks.length}
                 />

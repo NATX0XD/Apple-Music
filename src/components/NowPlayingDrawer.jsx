@@ -22,7 +22,6 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
     const currentTrack = player?.currentTrack;
     const isVideoMode = player?.isVideo;
 
-    // Check if video or audio equivalent is available when track changes
     useEffect(() => {
         if (!isOpen || !currentTrack) return;
 
@@ -55,7 +54,6 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                             setAudioTrackData(audioTracks[0]);
                             setHasAudio(true);
                         } else {
-                            // Check original queue
                             const originalAudioTrack = player.queue?.[player.queueIndex];
                             if (originalAudioTrack && originalAudioTrack.kind !== 'music-video') {
                                 setAudioTrackData(originalAudioTrack);
@@ -148,7 +146,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                                     ? 'bg-theme-500/20 text-theme-600 dark:text-theme-300 border border-theme-500/30 shadow-lg'
                                                     : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
                                                 }`}
-                                            onClick={() => handleModeSwitch('audio')}
+                                            onPress={() => handleModeSwitch('audio')}
                                         >
                                             {hasAudio === false ? 'No Song' : 'Song'}
                                         </Button>
@@ -161,7 +159,7 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                                     ? 'bg-pink-500/20 text-pink-600 dark:text-pink-300 border border-pink-500/30 shadow-lg'
                                                     : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
                                                 }`}
-                                            onClick={() => handleModeSwitch('video')}
+                                            onPress={() => handleModeSwitch('video')}
                                         >
                                             {hasVideo === false ? 'No Video' : 'Video'}
                                         </Button>

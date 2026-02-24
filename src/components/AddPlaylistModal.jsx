@@ -24,7 +24,7 @@ export default function AddPlaylistModal({ isOpen, onClose, onSubmit }) {
             backdrop="blur"
             placement="center"
             size="md"
-            className="mb-10 sm:mb-0 max-w-[400px]" // bump up a bit from bottom on mobile, restrict width
+            className="mb-10 sm:mb-0 max-w-[400px]" 
             classNames={{
                 base: "bg-white/95 dark:bg-[#1c1c2e]/95 backdrop-blur-xl text-black dark:text-white border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl",
                 header: "border-b border-black/5 dark:border-white/5 px-6 py-5",

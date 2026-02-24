@@ -39,7 +39,7 @@ export default function HeroBanner({ track, onPlay }) {
                             size="sm"
                             className="bg-gradient-to-r from-theme-500 to-pink-500 text-white font-semibold shadow-lg shadow-theme-500/25 px-5"
                             startContent={<Play size={14} fill="white" />}
-                            onClick={() => onPlay(track)}
+                            onPress={() => onPlay(track)}
                         >
                             Play
                         </Button>
