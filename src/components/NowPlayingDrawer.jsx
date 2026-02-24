@@ -3,12 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Music, Video, Heart, ListPlus, Plus } from 'lucide-react';
 import { Button, ButtonGroup } from '@heroui/react';
 import TrackList from './TrackList';
-import { getArtwork, searchVideos } from '../services/itunesApi';
+import { getArtwork, searchVideos, searchTracks } from '../services/itunesApi';
 import { useFavorites, usePlaylists, useSettings } from '../hooks/useStorage';
 import AmbientGlow from './AmbientGlow';
 
 export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, handlePlayTrack }) {
     const [hasVideo, setHasVideo] = useState(null);
+    const [hasAudio, setHasAudio] = useState(null);
     const [videoTrackData, setVideoTrackData] = useState(null);
     const [audioTrackData, setAudioTrackData] = useState(null);
     const [showPlaylistMenu, setShowPlaylistMenu] = useState(false);
@@ -21,28 +22,61 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
     const currentTrack = player?.currentTrack;
     const isVideoMode = player?.isVideo;
 
-    // Check if video is available when track changes
+    // Check if video or audio equivalent is available when track changes
     useEffect(() => {
         if (!isOpen || !currentTrack) return;
 
-        if (currentTrack.kind !== 'music-video') {
-            setAudioTrackData(currentTrack);
-        }
-
         let isCancelled = false;
 
-        const checkVideo = async () => {
+        if (currentTrack.kind !== 'music-video') {
+            setAudioTrackData(currentTrack);
+            setHasAudio(true);
+        } else {
+            setVideoTrackData(currentTrack);
+            setHasVideo(true);
+        }
+
+        const checkMedia = async () => {
+            const cleanName = currentTrack.trackName
+                .replace(/\(feat\..*?\)/i, '')
+                .replace(/\(.*?(version|mix).*?\)/i, '')
+                .replace(/\[.*?\]/g, '')
+                .replace(/\(official.*?video\)/i, '')
+                .replace(/\(music video\)/i, '')
+                .trim();
+            const query = `${cleanName} ${currentTrack.artistName}`;
+
             if (currentTrack.kind === 'music-video') {
-                if (!isCancelled) {
-                    setHasVideo(true);
-                    setVideoTrackData(currentTrack);
+                setHasAudio(null);
+                try {
+                    const audioTracks = await searchTracks(query, 1);
+                    if (!isCancelled) {
+                        if (audioTracks && audioTracks.length > 0) {
+                            setAudioTrackData(audioTracks[0]);
+                            setHasAudio(true);
+                        } else {
+                            // Check original queue
+                            const originalAudioTrack = player.queue?.[player.queueIndex];
+                            if (originalAudioTrack && originalAudioTrack.kind !== 'music-video') {
+                                setAudioTrackData(originalAudioTrack);
+                                setHasAudio(true);
+                            } else {
+                                setAudioTrackData(null);
+                                setHasAudio(false);
+                            }
+                        }
+                    }
+                } catch (err) {
+                    if (!isCancelled) {
+                        setAudioTrackData(null);
+                        setHasAudio(false);
+                    }
                 }
                 return;
             }
 
             setHasVideo(null);
             try {
-                const query = `${currentTrack.trackName} ${currentTrack.artistName}`;
                 const videos = await searchVideos(query, 1);
 
                 if (!isCancelled) {
@@ -59,9 +93,9 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
             }
         };
 
-        checkVideo();
+        checkMedia();
         return () => { isCancelled = true; };
-    }, [currentTrack, isOpen]);
+    }, [currentTrack, isOpen, player.queue, player.queueIndex]);
 
     const handleModeSwitch = async (mode) => {
         if (mode === 'video' && !isVideoMode) {
@@ -107,21 +141,25 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                     <ButtonGroup size="sm" variant="flat" className="w-full max-w-xs">
                                         <Button
                                             startContent={<Music size={14} />}
-                                            className={`flex-1 font-medium text-xs ${!isVideoMode
-                                                ? 'bg-theme-500/20 text-theme-600 dark:text-theme-300 border border-theme-500/30 shadow-lg'
-                                                : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
+                                            isLoading={hasAudio === null && isVideoMode}
+                                            isDisabled={hasAudio === false}
+                                            className={`flex-1 font-medium text-xs transition-opacity ${hasAudio === false ? 'opacity-50 cursor-not-allowed bg-black/10 dark:bg-white/10' : ''
+                                                } ${!isVideoMode && hasAudio !== false
+                                                    ? 'bg-theme-500/20 text-theme-600 dark:text-theme-300 border border-theme-500/30 shadow-lg'
+                                                    : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
                                                 }`}
                                             onClick={() => handleModeSwitch('audio')}
                                         >
-                                            Song
+                                            {hasAudio === false ? 'No Song' : 'Song'}
                                         </Button>
                                         <Button
                                             startContent={<Video size={14} />}
                                             isLoading={hasVideo === null && !isVideoMode}
                                             isDisabled={hasVideo === false}
-                                            className={`flex-1 font-medium text-xs ${isVideoMode
-                                                ? 'bg-pink-500/20 text-pink-600 dark:text-pink-300 border border-pink-500/30 shadow-lg'
-                                                : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
+                                            className={`flex-1 font-medium text-xs transition-opacity ${hasVideo === false ? 'opacity-50 cursor-not-allowed bg-black/10 dark:bg-white/10' : ''
+                                                } ${isVideoMode && hasVideo !== false
+                                                    ? 'bg-pink-500/20 text-pink-600 dark:text-pink-300 border border-pink-500/30 shadow-lg'
+                                                    : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
                                                 }`}
                                             onClick={() => handleModeSwitch('video')}
                                         >
