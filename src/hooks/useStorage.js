@@ -155,7 +155,8 @@ export function useRecentSearches() {
 export function useSettings() {
     const [settings, setSettings] = useLocalStorage('apple-music-settings', {
         themeColor: 'purple', // default color
-        trackLimit: 20
+        trackLimit: 20,
+        isAmbientMode: true
     });
 
     const updateSettings = (newSettings) => {

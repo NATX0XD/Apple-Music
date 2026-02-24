@@ -20,7 +20,7 @@ export default function TrackList({ tracks, currentTrack, onPlay, playlistAction
 
     return (
         <div className="flex flex-col">
-            <div className="glass-card overflow-hidden">
+            <div className="glass-card overflow-hidden dark:border-none">
                 {/* Table Header */}
                 <div className={`grid gap-2 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-default-600 dark:text-default-400 border-b border-black/5 dark:border-white/5 
                 ${playlistActions ? 'grid-cols-[40px_1fr_1fr_80px_80px_40px]' : 'grid-cols-[40px_1fr_1fr_80px_80px]'}`}>

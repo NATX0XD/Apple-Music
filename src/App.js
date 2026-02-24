@@ -51,7 +51,7 @@ function App() {
     // The Right Panel requirements state we should remove Recently Played. 
     // We can just omit passing it to RightPanel.
 
-    // Load featured tracks on mount
+    // Load featured tracks based on contentType
     useEffect(() => {
         // Handle responsive sidebar
         const handleResize = () => {
@@ -68,7 +68,10 @@ function App() {
             if (!searchParams.get('q')) setLoading(true);
             try {
                 const randomSearch = FEATURED_SEARCHES[Math.floor(Math.random() * FEATURED_SEARCHES.length)];
-                const results = await searchTracks(randomSearch, parseInt(settings.trackLimit) || 25);
+                const limit = parseInt(settings.trackLimit) || 25;
+                const results = contentType === 'videos'
+                    ? await searchVideos(randomSearch, limit)
+                    : await searchTracks(randomSearch, limit);
                 setFeaturedTracks(results);
             } catch (err) {
                 console.error('Failed to load featured tracks:', err);
@@ -79,7 +82,7 @@ function App() {
 
         return () => window.removeEventListener('resize', handleResize);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [settings.trackLimit]);
+    }, [settings.trackLimit, contentType]);
 
     // Extract ambient color when track changes
     useEffect(() => {
@@ -234,7 +237,7 @@ function App() {
                     </div>
 
                     <div className="flex-1 flex overflow-hidden relative">
-                        <ScrollShadow className="flex-1 p-6 overflow-y-auto">
+                        <ScrollShadow className="flex-1 p-6 overflow-y-auto apple-glass backdrop-blur-[64px] bg-black/60">
                             <Routes>
                                 <Route path="/" element={
                                     <HomePage
@@ -262,7 +265,7 @@ function App() {
                         </ScrollShadow>
 
                         {/* Right Panel */}
-                        <div className="w-[280px] flex-shrink-0 border-l border-white/5 hidden lg:block bg-black/10">
+                        <div className="w-[280px] flex-shrink-0 border-l border-white/5 hidden lg:block apple-glass backdrop-blur-[64px] bg-black/60">
                             <RightPanel
                                 player={player}
                                 onOpenDrawer={() => setIsDrawerOpen(true)}
@@ -272,7 +275,7 @@ function App() {
                                 mediaElement={
                                     player.currentTrack && !(isDrawerOpen && player.isVideo) && (
                                         <video
-                                            ref={player.audioRef}
+                                            ref={player.setAudioRef}
                                             src={player.currentTrack.previewUrl}
                                             autoPlay
                                             playsInline

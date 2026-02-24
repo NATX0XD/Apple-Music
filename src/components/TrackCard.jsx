@@ -8,7 +8,7 @@ export default function TrackCard({ track, isPlaying, onPlay }) {
 
     return (
         <div
-            className={`glass-card p-3 cursor-pointer group relative overflow-hidden
+            className={`glass-card dark:border-none p-3 cursor-pointer group relative overflow-hidden
         ${isPlaying ? 'ring-1 ring-theme-500/40 ambient-glow' : ''}`}
             onClick={() => onPlay(track)}
         >

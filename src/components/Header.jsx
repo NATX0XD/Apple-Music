@@ -51,7 +51,7 @@ export default function Header({
     };
 
     return (
-        <div className="flex items-center gap-4 px-6 h-full glass">
+        <div className="flex items-center gap-4 px-6 h-full apple-glass backdrop-blur-[64px] bg-black/60 z-20">
             {/* Sidebar Toggle (Mobile / Optional) */}
             <button
                 onClick={onToggleSidebar}
@@ -166,29 +166,31 @@ export default function Header({
 
             {/* Content Type Toggle & Profile Avatar Wrapper */}
             <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
-                <div className="hidden md:block">
-                    <ButtonGroup size="sm" variant="flat">
-                        <Button
-                            startContent={<Music size={14} />}
-                            className={`text-xs font-medium ${contentType === 'songs'
-                                ? 'bg-theme-500/20 text-theme-600 dark:text-theme-300 border border-theme-500/30'
-                                : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
-                                }`}
-                            onClick={() => onContentTypeChange('songs')}
-                        >
-                            Songs
-                        </Button>
-                        <Button
-                            startContent={<Video size={14} />}
-                            className={`text-xs font-medium ${contentType === 'videos'
-                                ? 'bg-theme-500/20 text-theme-600 dark:text-theme-300 border border-theme-500/30'
-                                : 'bg-black/5 dark:bg-white/5 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
-                                }`}
-                            onClick={() => onContentTypeChange('videos')}
-                        >
-                            Music Videos
-                        </Button>
-                    </ButtonGroup>
+                <div className="hidden md:flex bg-black/5 dark:bg-white/5 p-1.5 rounded-full items-center gap-1  dark:border-white/10">
+                    <Button
+                        size="md"
+                        radius="full"
+                        startContent={<Music size={14} />}
+                        className={`text-xs font-medium px-4 h-7 ${contentType === 'songs'
+                            ? 'bg-white dark:bg-[#2a2a35] text-theme-600 dark:text-theme-300 shadow-sm'
+                            : 'bg-transparent text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
+                            }`}
+                        onPress={() => onContentTypeChange('songs')}
+                    >
+                        Songs
+                    </Button>
+                    <Button
+                        size="md"
+                        radius="full"
+                        startContent={<Video size={14} />}
+                        className={`text-xs font-medium px-4 h-7 ${contentType === 'videos'
+                            ? 'bg-white dark:bg-[#2a2a35] text-theme-600 dark:text-theme-300 shadow-sm'
+                            : 'bg-transparent text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white'
+                            }`}
+                        onPress={() => onContentTypeChange('videos')}
+                    >
+                        Music Videos
+                    </Button>
                 </div>
 
                 {/* Profile Avatar - flush right */}
@@ -200,7 +202,7 @@ export default function Header({
                 >
                     <div className="text-right hidden xl:block">
                         <p className="text-xs font-semibold leading-tight group-hover:text-theme-500 dark:group-hover:text-theme-300 transition-colors text-black dark:text-white">Nattakit Jinakul</p>
-                        <p className="text-[10px] text-default-600 dark:text-default-500 leading-tight">Creator</p>
+                        <p className="text-[10px] text-default-600 dark:text-default-500 leading-tight">DEV | KMUTNB</p>
                     </div>
                     <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-black/10 dark:border-white/10 group-hover:border-theme-500/50 transition-all flex-shrink-0 shadow-md">
                         <img

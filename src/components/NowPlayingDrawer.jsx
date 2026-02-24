@@ -4,13 +4,16 @@ import { ChevronDown, Music, Video, Heart, ListPlus, Plus } from 'lucide-react';
 import { Button, ButtonGroup } from '@heroui/react';
 import TrackList from './TrackList';
 import { getArtwork, searchVideos } from '../services/itunesApi';
-import { useFavorites, usePlaylists } from '../hooks/useStorage';
+import { useFavorites, usePlaylists, useSettings } from '../hooks/useStorage';
+import AmbientGlow from './AmbientGlow';
 
 export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, handlePlayTrack }) {
     const [hasVideo, setHasVideo] = useState(null);
     const [videoTrackData, setVideoTrackData] = useState(null);
     const [audioTrackData, setAudioTrackData] = useState(null);
     const [showPlaylistMenu, setShowPlaylistMenu] = useState(false);
+    const { settings } = useSettings();
+    const AmbientMode = settings.isAmbientMode !== false;
 
     const { isFavorite, toggleFavorite } = useFavorites();
     const { playlists, addTrackToPlaylist } = usePlaylists();
@@ -130,28 +133,14 @@ export default function NowPlayingDrawer({ isOpen, onClose, player, tracks, hand
                                 {/* Artwork/Video with Ambient Glow */}
                                 <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md">
                                     {/* Ambient glow layers */}
-                                    <div
-                                        className="absolute -inset-6 sm:-inset-8 rounded-[2rem] opacity-50 blur-3xl animate-[ambientPulse_4s_ease-in-out_infinite]"
-                                        style={{
-                                            backgroundImage: `url(${getArtwork(currentTrack.artworkUrl100, 300)})`,
-                                            backgroundSize: 'cover',
-                                            backgroundPosition: 'center',
-                                        }}
-                                    />
-                                    <div
-                                        className="absolute -inset-4 sm:-inset-6 rounded-[2rem] opacity-30 blur-2xl animate-[ambientPulse_4s_ease-in-out_1.5s_infinite]"
-                                        style={{
-                                            backgroundImage: `url(${getArtwork(currentTrack.artworkUrl100, 300)})`,
-                                            backgroundSize: 'cover',
-                                            backgroundPosition: 'center',
-                                        }}
-                                    />
-
+                                    {AmbientMode && (
+                                        <AmbientGlow currentTrack={currentTrack} />
+                                    )}
                                     {/* Main artwork */}
                                     <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl bg-black/50 flex items-center justify-center z-10">
                                         {isVideoMode ? (
                                             <video
-                                                ref={player.audioRef}
+                                                ref={player.setAudioRef}
                                                 src={currentTrack.previewUrl}
                                                 className="w-full h-full object-contain bg-black"
                                                 playsInline

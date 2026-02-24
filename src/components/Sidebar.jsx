@@ -26,7 +26,7 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
     const isCollapsed = !isSidebarOpen;
 
     return (
-        <div className={`flex flex-col h-full apple-glass py-4 overflow-hidden border-r backdrop-blur-[64px] bg-black/60 lg:bg-transparent dark:lg:bg-transparent transition-all duration-300 ${isCollapsed ? 'lg:px-3 lg:items-center' : 'px-4'}`}>
+        <div className={`flex flex-col h-full apple-glass py-4 overflow-hidden border-r border-white/10 backdrop-blur-[64px] bg-black/60 transition-all duration-300 ${isCollapsed ? 'lg:px-3 lg:items-center' : 'px-4'}`}>
             {/* Logo */}
             <div className={`flex items-center mb-6 mt-2 whitespace-nowrap ${isCollapsed ? 'lg:justify-center' : 'px-2 justify-between'}`}>
                 {isSidebarOpen ? (

@@ -22,7 +22,7 @@ export default function PlayerBar({
 }) {
     if (!currentTrack) {
         return (
-            <div className="apple-glass flex items-center justify-center h-full border-t">
+            <div className="apple-glass flex items-center justify-center h-full border-t backdrop-blur-[64px] bg-black/60">
                 <p className="text-default-600 dark:text-default-400 text-sm">Select a song to start playing</p>
             </div>
         );
@@ -31,7 +31,7 @@ export default function PlayerBar({
     const artworkUrl = getArtwork(currentTrack.artworkUrl100, 120);
 
     return (
-        <div className="apple-glass flex items-center gap-4 px-5 h-full border-t">
+        <div className="apple-glass flex items-center gap-4 px-5 h-full border-t border-white/10 backdrop-blur-[64px] bg-black/60">
             {/* Track Info */}
             <div
                 className="flex items-center gap-3 min-w-0 w-[240px] cursor-pointer group hover:bg-black/5 dark:hover:bg-white/5 p-2 -ml-2 rounded-xl transition-colors"

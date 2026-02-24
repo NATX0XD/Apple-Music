@@ -92,6 +92,23 @@ export default function SettingsModal({ isOpen, onClose }) {
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Effects */}
+                            <div>
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-default-600 dark:text-default-400 mb-4">Effects</h3>
+                                <button
+                                    onClick={() => updateSettings({ isAmbientMode: !(settings.isAmbientMode !== false) })}
+                                    className="w-full flex items-center justify-between p-4 rounded-xl border border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                                >
+                                    <div className="text-left">
+                                        <p className="text-sm font-medium">Ambient Glow</p>
+                                        <p className="text-xs text-default-500">Dynamic background glow matching album art</p>
+                                    </div>
+                                    <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${settings.isAmbientMode !== false ? 'bg-theme-500' : 'bg-default-300 dark:bg-default-600'}`}>
+                                        <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${settings.isAmbientMode !== false ? 'translate-x-[22px]' : 'translate-x-0.5'}`} />
+                                    </div>
+                                </button>
+                            </div>
                         </ModalBody>
 
                         <ModalFooter>

@@ -2,6 +2,11 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 
 export function useAudioPlayer() {
     const audioRef = useRef(null);
+    const setAudioRef = useCallback((node) => {
+        if (node) {
+            audioRef.current = node;
+        }
+    }, []);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -121,7 +126,7 @@ export function useAudioPlayer() {
         playNext,
         playPrev,
         isVideo,
-        audioRef,
+        setAudioRef,
         setShuffle: () => setShuffle(!shuffle),
         setRepeat: () => setRepeat(!repeat),
         handleTimeUpdate,
