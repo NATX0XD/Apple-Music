@@ -48,6 +48,7 @@ export default function HeroBanner({ track, onPlay }) {
                             variant="bordered"
                             className="border-white/20 text-white hover:bg-white/10"
                             startContent={<UserPlus size={14} />}
+                            onPress={() => window.open(track.artistViewUrl, '_blank')}
                         >
                             Follow
                         </Button>
