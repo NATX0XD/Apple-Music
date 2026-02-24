@@ -38,7 +38,7 @@ export default function RightPanel({ onGenreClick, player, onOpenDrawer, mediaEl
                 </div>
 
                 {/* Now Playing Card */}
-                {currentTrack && (
+                {currentTrack ? (
                     <div className="relative isolate group cursor-pointer w-full max-w-full" onClick={onOpenDrawer}>
                         {/* Ambient mode && check hide show */}
 
@@ -84,7 +84,13 @@ export default function RightPanel({ onGenreClick, player, onOpenDrawer, mediaEl
                             </div>
                         </div>
                     </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center">
+                        <p className="text-sm text-default-600 dark:text-default-400 py-20">No song selected</p>
+                    </div>
+
                 )}
+
             </ScrollShadow>
         </div>
     );

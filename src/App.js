@@ -192,6 +192,18 @@ function App() {
                     e.preventDefault();
                     player.changeVolume(player.volume - 0.1);
                     break;
+                case 'MediaPlayPause':
+                    e.preventDefault();
+                    player.togglePlay();
+                    break;
+                case 'MediaTrackNext':
+                    e.preventDefault();
+                    player.playNext();
+                    break;
+                case 'MediaTrackPrevious':
+                    e.preventDefault();
+                    player.playPrev();
+                    break;
                 default:
                     break;
             }

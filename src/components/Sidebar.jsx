@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Home, History, Heart, Settings, Plus, Music, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Home, History, Heart, Settings, Plus, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { usePlaylists } from '../hooks/useStorage';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AddPlaylistModal from './AddPlaylistModal';
 import PlaylistCover from './PlaylistCover';
-import { Tooltip } from '@heroui/react';
-
+import { Image, Tooltip } from '@heroui/react';
+import logo from '../images/logo/apple-music.png';
 const navItems = [
     { icon: Home, label: 'Home', path: '/' },
     { icon: History, label: 'History', path: '/history' },
@@ -28,13 +28,24 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
     return (
         <div className={`flex flex-col h-full apple-glass py-4 overflow-hidden border-r border-white/10 backdrop-blur-[64px] bg-black/60 transition-all duration-300 ${isCollapsed ? 'lg:px-3 lg:items-center' : 'px-4'}`}>
             {/* Logo */}
-            <div className={`flex items-center mb-6 mt-2 whitespace-nowrap ${isCollapsed ? 'lg:justify-center' : 'px-2 justify-between'}`}>
+            <div className={`flex mb-6  whitespace-nowrap ${isCollapsed ? 'flex-col-reverse items-center gap-4 lg:justify-center mt-0' : 'items-center px-2 justify-between mt-2'}`}>
                 {isSidebarOpen ? (
-                    <span className="text-xl font-bold tracking-tight text-black border-black/10 dark:text-white/90">
-                        APPLE MUSIC
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <img
+                            alt="Apple Music Logo"
+                            src={logo}
+                            className="w-6 h-6 object-contain rounded-md"
+                        />
+                        <span className="text-xl font-bold tracking-tight text-black border-black/10 dark:text-white/90">
+                            APPLE MUSIC
+                        </span>
+                    </div>
                 ) : (
-                    <Music size={24} className="text-theme-400 hidden lg:block" fill="currentColor" />
+                    <img
+                        alt="Apple Music Logo"
+                        src={logo}
+                        className="w-10 h-10 object-contain rounded-xl"
+                    />
                 )}
                 {/* Collapse/Expand Toggle - desktop only */}
                 <button
@@ -94,7 +105,11 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
                     </button>
                 </Tooltip>
             </div>
-
+            <Image
+                alt="Apple Music Logo"
+                src="../images/logo/apple-music.png"
+                width={24}
+            />
             <nav className={`space-y-1 flex-1 overflow-y-auto custom-scrollbar ${isCollapsed ? 'lg:pr-0 pr-1' : 'pr-1'}`}>
                 {playlists.map((pl) => {
                     const path = `/playlist/${pl.slug}`;
@@ -138,17 +153,22 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
                     </div>
                 )}
             </nav>
-
+            <hr className="border-black/10 dark:border-white/10" />
             {/* Bottom actions (Theme only) */}
             <div className={`mt-4 flex-shrink-0 ${isCollapsed ? 'lg:px-0 px-2' : 'px-2'}`}>
                 <Tooltip content="Settings" placement="right" isDisabled={!isCollapsed} delay={0} closeDelay={0}>
                     <button
                         onClick={onThemeToggle}
-                        className={`w-full flex justify-center items-center rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white transition-colors ${isCollapsed ? 'lg:p-3' : 'py-3'}`}
+                        className={`w-full flex items-center rounded-xl transition-all duration-300 ${isCollapsed ? 'lg:justify-center p-3' : 'justify-start px-4 py-3 gap-4'} bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white group border border-transparent hover:border-black/10 dark:hover:border-white/10`}
                         title="Settings & Appearance"
                     >
-                        <Settings size={isCollapsed ? 20 : 18} />
+                        <Settings size={isCollapsed ? 20 : 18} className="group-hover:rotate-90 transition-transform duration-500" />
+                        <span className={`font-medium ${isCollapsed ? 'lg:hidden' : ''}`}>Settings</span>
                     </button>
+
+
+
+
                 </Tooltip>
             </div>
 

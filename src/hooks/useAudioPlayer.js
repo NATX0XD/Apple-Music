@@ -110,6 +110,41 @@ export function useAudioPlayer() {
         }
     }, [repeat, playNext]);
 
+    // Setup Media Session API for OS-level media controls
+    useEffect(() => {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', () => {
+                const audio = audioRef.current;
+                if (audio) {
+                    audio.play().catch(() => { });
+                    setIsPlaying(true);
+                }
+            });
+            navigator.mediaSession.setActionHandler('pause', () => {
+                const audio = audioRef.current;
+                if (audio) {
+                    audio.pause();
+                    setIsPlaying(false);
+                }
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+            navigator.mediaSession.setActionHandler('nexttrack', playNext);
+        }
+    }, [playPrev, playNext]);
+
+    useEffect(() => {
+        if ('mediaSession' in navigator && currentTrack) {
+            navigator.mediaSession.metadata = new window.MediaMetadata({
+                title: currentTrack.trackName || 'Unknown Title',
+                artist: currentTrack.artistName || 'Unknown Artist',
+                album: currentTrack.collectionName || '',
+                artwork: [
+                    { src: currentTrack.artworkUrl100?.replace('100x100', '512x512') || '', sizes: '512x512', type: 'image/jpeg' }
+                ]
+            });
+        }
+    }, [currentTrack]);
+
     return {
         currentTrack,
         isPlaying,

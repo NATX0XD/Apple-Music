@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, ChevronLeft, ChevronRight, Search, Music, Video, Clock, X } from 'lucide-react';
+import { Menu, ChevronLeft, ChevronRight, Search, Music, Video, Clock, X, ListEnd } from 'lucide-react';
 import { Input, Button } from '@heroui/react';
 import { useRecentSearches } from '../hooks/useStorage';
 import profileImg from '../images/68-020415-1032-5.JPG';
@@ -155,6 +155,7 @@ export default function Header({
                             else if (num > 50) setLimit(50);
                         }}
                         variant="bordered"
+                        startContent={<ListEnd size={14} className="text-default-400" />}
                         classNames={{
                             inputWrapper: "bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 focus-within:!bg-black/10 dark:focus-within:!bg-white/15 border-1 border-black/20 dark:border-white/20 hover:border-black/30 dark:hover:border-white/30 h-10 shadow-none px-3 transition-colors",
                             input: " bg-transparent text-center text-sm font-medium text-black dark:text-white"
