@@ -12,7 +12,7 @@ const navItems = [
     { icon: Heart, label: 'Favorites', path: '/favorites' },
 ];
 
-export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggleSidebar }) {
+export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggleSidebar, userInfo, onRequireAuth }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { playlists, createPlaylist } = usePlaylists();
@@ -57,12 +57,15 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
                 </button>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation Menu */}
             <div className={`mb-2 ${isCollapsed ? 'lg:hidden' : 'px-2'}`}>
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-default-600 dark:text-default-400">Menu</span>
             </div>
             <nav className={`space-y-1.5 mb-6 ${isCollapsed ? 'lg:px-0' : ''}`}>
                 {navItems.map(({ icon: Icon, label, path }) => {
+                    // Hide restricted menus if not logged in
+                    if (!userInfo && path !== '/') return null;
+
                     const isActive = location.pathname === path;
                     const button = (
                         <button
@@ -92,67 +95,104 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
                 })}
             </nav>
 
-            {/* Library / Playlists */}
-            <div className={`mb-2 flex items-center justify-between ${isCollapsed ? 'lg:justify-center lg:px-0 px-2' : 'px-2'}`}>
-                <span className={`text-[10px] font-semibold uppercase tracking-wider text-default-600 dark:text-default-400 ${isCollapsed ? 'lg:hidden' : ''}`}>Playlists</span>
-                <Tooltip content="Create Playlist" placement="right" isDisabled={!isCollapsed} delay={0} closeDelay={0}>
-                    <button
-                        onClick={() => setIsAddModalOpen(true)}
-                        className={`hover:bg-black/10 dark:hover:bg-white/10 rounded-full text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white transition-colors ${isCollapsed ? 'lg:p-2 p-1' : 'p-1'}`}
-                        title={isSidebarOpen ? "" : "Create Playlist"}
-                    >
-                        <Plus size={isCollapsed ? 20 : 14} />
-                    </button>
-                </Tooltip>
-            </div>
-            <Image
-                alt="Apple Music Logo"
-                src="../images/logo/apple-music.png"
-                width={24}
-            />
-            <nav className={`space-y-1 flex-1 overflow-y-auto custom-scrollbar ${isCollapsed ? 'lg:pr-0 pr-1' : 'pr-1'}`}>
-                {playlists.map((pl) => {
-                    const path = `/playlist/${pl.slug}`;
-                    const isActive = location.pathname === path;
-                    const button = (
-                        <button
-                            key={pl.id}
-                            onClick={() => navigate(path)}
-                            className={`w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200 truncate
-                                ${isCollapsed ? 'lg:justify-center lg:p-2.5' : 'px-3 py-2'}
-                                ${isActive
-                                    ? `${isCollapsed ? 'lg:bg-theme-500/15' : 'bg-gradient-to-r from-theme-500/20 to-pink-500/20'} text-black dark:text-white border border-theme-500/20`
-                                    : 'text-default-600 dark:text-default-500 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 text-left border border-transparent'
-                                }`}
-                            title={isCollapsed ? pl.name : ""}
-                        >
-                            <PlaylistCover
-                                tracks={pl.tracks}
-                                className={`${isCollapsed ? 'lg:w-7 lg:h-7 w-5 h-5' : 'w-5 h-5'} flex-shrink-0 opacity-80 rounded-md`}
-                                iconSize={isCollapsed ? 18 : 16}
-                            />
-                            <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''}`}>{pl.name}</span>
-                        </button>
-                    );
-
-                    if (isCollapsed) {
-                        return (
-                            <Tooltip key={pl.id} content={pl.name} placement="right" delay={0} closeDelay={0}>
-                                {button}
-                            </Tooltip>
-                        );
-                    }
-                    return <React.Fragment key={pl.id}>{button}</React.Fragment>;
-                })}
-                {playlists.length === 0 && (
-                    <div className={`py-4 text-xs text-default-600 dark:text-default-500 text-center border border-dashed border-black/10 dark:border-white/10 rounded-xl mt-2 ${isCollapsed ? 'lg:px-1 px-3' : 'px-3'}`}>
-                        {isCollapsed ? (
-                            <span className="hidden lg:block text-lg">+</span>
-                        ) : null}
-                        <span className={isCollapsed ? 'lg:hidden' : ''}>No playlists yet.<br />Click + to create one.</span>
+            {/* Library / Playlists Header (Only show when logged in) */}
+            {userInfo && (
+                <>
+                    <div className={`mb-2 flex items-center justify-between ${isCollapsed ? 'lg:justify-center lg:px-0 px-2' : 'px-2'}`}>
+                        <span className={`text-[10px] font-semibold uppercase tracking-wider text-default-600 dark:text-default-400 ${isCollapsed ? 'lg:hidden' : ''}`}>Playlists</span>
+                        <Tooltip content="Create Playlist" placement="right" isDisabled={!isCollapsed} delay={0} closeDelay={0}>
+                            <button
+                                onClick={() => setIsAddModalOpen(true)}
+                                className={`hover:bg-black/10 dark:hover:bg-white/10 rounded-full text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white transition-colors ${isCollapsed ? 'lg:p-2 p-1' : 'p-1'}`}
+                                title={isSidebarOpen ? "" : "Create Playlist"}
+                            >
+                                <Plus size={isCollapsed ? 20 : 14} />
+                            </button>
+                        </Tooltip>
                     </div>
-                )}
-            </nav>
+                    {/* Placeholder image logo you originally placed here */}
+                    <Image
+                        alt="Apple Music Logo"
+                        src="../images/logo/apple-music.png"
+                        width={24}
+                    />
+
+                    <nav className={`space-y-1 flex-1 overflow-y-auto custom-scrollbar ${isCollapsed ? 'lg:pr-0 pr-1' : 'pr-1'}`}>
+                        {playlists.map((pl) => {
+                            const path = `/playlist/${pl.slug}`;
+                            const isActive = location.pathname === path;
+                            const button = (
+                                <button
+                                    key={pl.id}
+                                    onClick={() => navigate(path)}
+                                    className={`w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200 truncate
+                                        ${isCollapsed ? 'lg:justify-center lg:p-2.5' : 'px-3 py-2'}
+                                        ${isActive
+                                            ? `${isCollapsed ? 'lg:bg-theme-500/15' : 'bg-gradient-to-r from-theme-500/20 to-pink-500/20'} text-black dark:text-white border border-theme-500/20`
+                                            : 'text-default-600 dark:text-default-500 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 text-left border border-transparent'
+                                        }`}
+                                    title={isCollapsed ? pl.name : ""}
+                                >
+                                    <PlaylistCover
+                                        tracks={pl.tracks}
+                                        className={`${isCollapsed ? 'lg:w-7 lg:h-7 w-5 h-5' : 'w-5 h-5'} flex-shrink-0 opacity-80 rounded-md`}
+                                        iconSize={isCollapsed ? 18 : 16}
+                                    />
+                                    <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''}`}>{pl.name}</span>
+                                </button>
+                            );
+
+                            if (isCollapsed) {
+                                return (
+                                    <Tooltip key={pl.id} content={pl.name} placement="right" delay={0} closeDelay={0}>
+                                        {button}
+                                    </Tooltip>
+                                );
+                            }
+                            return <React.Fragment key={pl.id}>{button}</React.Fragment>;
+                        })}
+                        {playlists.length === 0 && (
+                            <div className={`py-4 text-xs text-default-600 dark:text-default-500 text-center border border-dashed border-black/10 dark:border-white/10 rounded-xl mt-2 ${isCollapsed ? 'lg:px-1 px-3' : 'px-3'}`}>
+                                {isCollapsed ? (
+                                    <span className="hidden lg:block text-lg">+</span>
+                                ) : null}
+                                <span className={isCollapsed ? 'lg:hidden' : ''}>No playlists yet.<br />Click + to create one.</span>
+                            </div>
+                        )}
+                    </nav>
+                </>
+            )}
+
+            {/* Guest View Message (Show when NOT logged in) */}
+            {!userInfo && (
+                <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+                    <div className="w-12 h-12 bg-black/5 dark:bg-white/5 rounded-full flex items-center justify-center mb-3 text-default-400">
+                        <Heart size={20} />
+                    </div>
+                    {isSidebarOpen ? (
+                        <>
+                            <p className="text-sm font-semibold mb-1 text-black dark:text-white">Save your music</p>
+                            <p className="text-xs text-default-500 mb-4 px-2">Log in to create playlists and save your favorite songs.</p>
+                            <button
+                                onClick={onRequireAuth}
+                                className="text-xs font-semibold bg-theme-500 text-white px-4 py-2 rounded-full hover:bg-theme-600 transition-colors shadow-sm w-full"
+                            >
+                                Sign In
+                            </button>
+                        </>
+                    ) : (
+                        <Tooltip content="Sign In" placement="right">
+                            <button
+                                onClick={onRequireAuth}
+                                className="w-8 h-8 flex items-center justify-center bg-theme-500 text-white rounded-full hover:bg-theme-600 transition-colors shadow-sm"
+                            >
+                                <Heart size={14} />
+                            </button>
+                        </Tooltip>
+                    )}
+                </div>
+            )}
+
             <hr className="border-black/10 dark:border-white/10" />
             {/* Bottom actions (Theme only) */}
             <div className={`mt-4 flex-shrink-0 ${isCollapsed ? 'lg:px-0 px-2' : 'px-2'}`}>

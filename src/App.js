@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ScrollShadow } from '@heroui/react';
-import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
+import { Routes, Route, useNavigate, useSearchParams, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import PlayerBar from './components/PlayerBar';
@@ -15,7 +15,10 @@ import { searchTracks, searchVideos, FEATURED_SEARCHES, getArtwork } from './ser
 import { useAudioPlayer } from './hooks/useAudioPlayer';
 import { useAmbientColor } from './hooks/useAmbientColor';
 import { useHistory, useSettings } from './hooks/useStorage';
-
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import ModalSignIn from './components/ModalSignIn';
+import NotFoundPage from './pages/NotFoundPage';
+import auth from './firebase_config';
 function App() {
     const { settings } = useSettings();
     const isDark = settings.isDark !== false; // Default true
@@ -47,6 +50,61 @@ function App() {
 
     const searchTerm = searchParams.get('q') || '';
     const contentType = searchParams.get('type') || 'songs';
+
+    const [userInfo, setUserInfo] = useState(null);
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
+    const [isModalSignInOpen, setIsModalSignInOpen] = useState(() => {
+        if (localStorage.getItem('showSignInModal') === 'true') {
+            localStorage.removeItem('showSignInModal');
+            return true;
+        }
+        return false;
+    });
+
+    // check login
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                setUserInfo(user);
+                console.log('User is Signed in:', user);
+            } else {
+                setUserInfo(null);
+                console.log('User is Signed out');
+            }
+            setIsAuthLoading(false);
+        });
+        return unsubscribe;
+    }, []);
+    // sing in function
+    const signIn = () => {
+        const provider = new GoogleAuthProvider();
+        auth.useDeviceLanguage();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // const credential = GoogleAuthProvider.credentialFromResult(result);
+                // const token = credential.accessToken;
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                console.error("Login Error:", errorMessage);
+                window.alert(`Sign-in failed: ${errorMessage}`);
+            });
+    }
+    //sign out 
+    const handleSignOut = () => {
+        signOut(auth).then(() => {
+            console.log('User is Signed out');
+            localStorage.setItem('showSignInModal', 'true');
+            window.location.href = '/';
+        }).catch((error) => {
+            console.error('Error signing out:', error);
+            window.alert(`Sign-out failed: ${error.message}`);
+            alert(error);
+        });
+    }
+
+
+    // sing out function
 
     // The Right Panel requirements state we should remove Recently Played. 
     // We can just omit passing it to RightPanel.
@@ -153,6 +211,12 @@ function App() {
     }, [contentType, searchParams, navigate]);
 
     const handlePlayTrack = useCallback((track, queue, index) => {
+        // Block playback if user is not logged in
+        if (!userInfo) {
+            setIsModalSignInOpen(true);
+            return;
+        }
+
         if (!track.previewUrl) return;
 
         let resolvedIndex = index;
@@ -165,7 +229,7 @@ function App() {
 
         // Add to local storage history
         addToHistory(track);
-    }, [player, tracks, addToHistory]);
+    }, [player, tracks, addToHistory, userInfo]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -212,6 +276,22 @@ function App() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [player]);
 
+    // Component for protecting routes
+    const ProtectedRoute = ({ children }) => {
+        if (isAuthLoading) {
+            // Can return a loading spinner or empty div while checking initial auth
+            return <div className="flex-1 flex items-center justify-center h-full"><span className="text-default-500">Loading...</span></div>;
+        }
+
+        if (!userInfo) {
+            // Open modal immediately and redirect to home
+            setTimeout(() => setIsModalSignInOpen(true), 100);
+            return <Navigate to="/" replace />;
+        }
+
+        return children;
+    };
+
     return (
         <div className={`h-screen w-screen overflow-hidden ${isDark ? 'dark ' : 'light '} ${bgClass}`}>
             <div className="fixed inset-0 pointer-events-none ambient-bg transition-all duration-1000" />
@@ -234,6 +314,8 @@ function App() {
                         onThemeToggle={() => setIsSettingsOpen(true)}
                         isSidebarOpen={isSidebarOpen}
                         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+                        userInfo={userInfo}
+                        onRequireAuth={() => setIsModalSignInOpen(true)}
                     />
                 </div>
 
@@ -245,6 +327,11 @@ function App() {
                             contentType={contentType}
                             onContentTypeChange={handleContentTypeChange}
                             onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+                            signOut={handleSignOut}
+                            userInfo={userInfo}
+                            signIn={signIn}
+                            setIsModalSignInOpen={setIsModalSignInOpen}
+                            isModalSignInOpen={isModalSignInOpen}
                         />
                     </div>
 
@@ -265,14 +352,21 @@ function App() {
                                     />
                                 } />
                                 <Route path="/history" element={
-                                    <HistoryPage player={player} handlePlayTrack={handlePlayTrack} />
+                                    <ProtectedRoute>
+                                        <HistoryPage player={player} handlePlayTrack={handlePlayTrack} />
+                                    </ProtectedRoute>
                                 } />
                                 <Route path="/favorites" element={
-                                    <FavoritesPage player={player} handlePlayTrack={handlePlayTrack} />
+                                    <ProtectedRoute>
+                                        <FavoritesPage player={player} handlePlayTrack={handlePlayTrack} />
+                                    </ProtectedRoute>
                                 } />
                                 <Route path="/playlist/:slug" element={
-                                    <PlaylistPage player={player} handlePlayTrack={handlePlayTrack} />
+                                    <ProtectedRoute>
+                                        <PlaylistPage player={player} handlePlayTrack={handlePlayTrack} />
+                                    </ProtectedRoute>
                                 } />
+                                <Route path="*" element={<NotFoundPage />} />
                             </Routes>
                         </ScrollShadow>
 
@@ -338,6 +432,12 @@ function App() {
             <SettingsModal
                 isOpen={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
+            />
+
+            <ModalSignIn
+                isOpen={isModalSignInOpen}
+                onClose={() => setIsModalSignInOpen(false)}
+                signIn={signIn}
             />
         </div>
     );

@@ -1,15 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, ChevronLeft, ChevronRight, Search, Music, Video, Clock, X, ListEnd } from 'lucide-react';
+import { Menu, ChevronLeft, ChevronRight, Search, Music, Video, Clock, X, ListEnd, LogIn } from 'lucide-react';
 import { Input, Button } from '@heroui/react';
 import { useRecentSearches } from '../hooks/useStorage';
 import profileImg from '../images/68-020415-1032-5.JPG';
+import MiniProfile from './UsersMiniProfile';
+import UsersMiniProfile from './UsersMiniProfile';
 export default function Header({
     searchTerm,
     onSearch,
     contentType,
     onContentTypeChange,
-    onToggleSidebar
+    onToggleSidebar,
+    signOut,
+    userInfo,
+    signIn,
+    setIsModalSignInOpen,
+    isModalSignInOpen
 }) {
     const [value, setValue] = useState(searchTerm || '');
     const [limit, setLimit] = useState(20);
@@ -191,7 +198,7 @@ export default function Header({
                     </Button>
                 </div>
 
-                {/* Profile Avatar - flush right */}
+                {/* Profile Avatar - flush right
                 <a
                     href="https://nattakit-react-form.vercel.app"
                     target="_blank"
@@ -209,7 +216,22 @@ export default function Header({
                             className="w-full h-full object-cover"
                         />
                     </div>
-                </a>
+                </a> */}
+
+                {/* Sign Out Button */}
+                {userInfo ? (
+                    <UsersMiniProfile userInfo={userInfo} onPress={signOut} />
+                ) : (
+                    <Button
+                        size="md"
+                        radius="full"
+                        startContent={<LogIn size={14} />}
+                        className="text-xs font-medium px-4 h-7 bg-transparent text-default-600 dark:text-default-400 hover:text-black dark:hover:text-white transition-colors"
+                        onPress={() => setIsModalSignInOpen(true)}
+                    >
+                        Sign In
+                    </Button>
+                )}
             </div>
         </div>
     );
