@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ScrollShadow } from '@heroui/react';
-import { Routes, Route, useNavigate, useSearchParams, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useSearchParams, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import PlayerBar from './components/PlayerBar';
@@ -292,9 +292,23 @@ function App() {
         return children;
     };
 
+    // Known valid paths
+    const location = useLocation();
+    const validPaths = ['/', '/history', '/favorites'];
+    const isPlaylistPath = location.pathname.startsWith('/playlist/');
+    const isKnownRoute = validPaths.includes(location.pathname) || isPlaylistPath;
+
+    // If route is unknown, render full-screen 404
+    if (!isKnownRoute) {
+        return (
+            <div className={`h-screen w-screen overflow-hidden ${isDark ? 'dark ' : 'light '} ${bgClass}`}>
+                <NotFoundPage />
+            </div>
+        );
+    }
+
     return (
         <div className={`h-screen w-screen overflow-hidden ${isDark ? 'dark ' : 'light '} ${bgClass}`}>
-            <div className="fixed inset-0 pointer-events-none ambient-bg transition-all duration-1000" />
 
             <div className="relative z-10 h-full flex">
                 {/* Mobile Overlay */}
@@ -366,7 +380,6 @@ function App() {
                                         <PlaylistPage player={player} handlePlayTrack={handlePlayTrack} />
                                     </ProtectedRoute>
                                 } />
-                                <Route path="*" element={<NotFoundPage />} />
                             </Routes>
                         </ScrollShadow>
 

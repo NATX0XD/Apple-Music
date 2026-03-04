@@ -64,6 +64,10 @@ export default function ModalSignIn({ isOpen, onClose, signIn }) {
 
                             <p className="text-xs text-default-400 mt-6 text-center leading-relaxed">
                                 By continuing, you agree to our Terms of Service and Privacy Policy.
+                                Read <a href="https://nattakit-react-form.vercel.app" target="_blank"
+                                    rel="noopener noreferrer" className="text-theme-500 hover:underline">Terms of Service</a>
+                                and <a href="https://nattakit-react-form.vercel.app" target="_blank"
+                                    rel="noopener noreferrer" className="text-theme-500 hover:underline">Privacy Policy</a>
                             </p>
                         </ModalBody>
                     </>

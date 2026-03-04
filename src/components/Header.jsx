@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Menu, ChevronLeft, ChevronRight, Search, Music, Video, Clock, X, ListEnd, LogIn } from 'lucide-react';
 import { Input, Button } from '@heroui/react';
 import { useRecentSearches } from '../hooks/useStorage';
-import profileImg from '../images/68-020415-1032-5.JPG';
-import MiniProfile from './UsersMiniProfile';
 import UsersMiniProfile from './UsersMiniProfile';
 export default function Header({
     searchTerm,
