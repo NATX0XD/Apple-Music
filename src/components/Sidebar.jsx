@@ -63,14 +63,18 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
             </div>
             <nav className={`space-y-1.5 mb-6 ${isCollapsed ? 'lg:px-0' : ''}`}>
                 {navItems.map(({ icon: Icon, label, path }) => {
-                    // Hide restricted menus if not logged in
-                    if (!userInfo && path !== '/') return null;
-
+                    const isProtected = path !== '/';
                     const isActive = location.pathname === path;
                     const button = (
                         <button
                             key={path}
-                            onClick={() => navigate(path)}
+                            onClick={() => {
+                                if (isProtected && !userInfo) {
+                                    onRequireAuth();
+                                } else {
+                                    navigate(path);
+                                }
+                            }}
                             className={`w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200
                                 ${isCollapsed ? 'lg:justify-center lg:p-3' : 'px-3 py-2.5'}
                                 ${isActive
@@ -81,6 +85,9 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
                         >
                             <Icon size={isCollapsed ? 20 : 18} className={isActive ? 'text-theme-400' : ''} />
                             <span className={isCollapsed ? 'lg:hidden' : ''}>{label}</span>
+                            {isProtected && !userInfo && (
+                                <span className={`ml-auto text-[9px] font-semibold uppercase tracking-wider bg-theme-500/15 text-theme-500 px-1.5 py-0.5 rounded-md ${isCollapsed ? 'lg:hidden' : ''}`}>Auth</span>
+                            )}
                         </button>
                     );
 
@@ -163,34 +170,26 @@ export default function Sidebar({ isDark, onThemeToggle, isSidebarOpen, onToggle
                 </>
             )}
 
-            {/* Guest View Message (Show when NOT logged in) */}
+            {/* Playlist section for unauthenticated users */}
             {!userInfo && (
-                <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-                    <div className="w-12 h-12 bg-black/5 dark:bg-white/5 rounded-full flex items-center justify-center mb-3 text-default-400">
-                        <Heart size={20} />
+                <>
+                    <div className={`mb-2 flex items-center justify-between ${isCollapsed ? 'lg:justify-center lg:px-0 px-2' : 'px-2'}`}>
+                        <span className={`text-[10px] font-semibold uppercase tracking-wider text-default-600 dark:text-default-400 ${isCollapsed ? 'lg:hidden' : ''}`}>Playlists</span>
                     </div>
-                    {isSidebarOpen ? (
-                        <>
-                            <p className="text-sm font-semibold mb-1 text-black dark:text-white">Save your music</p>
-                            <p className="text-xs text-default-500 mb-4 px-2">Log in to create playlists and save your favorite songs.</p>
-                            <button
-                                onClick={onRequireAuth}
-                                className="text-xs font-semibold bg-theme-500 text-white px-4 py-2 rounded-full hover:bg-theme-600 transition-colors shadow-sm w-full"
-                            >
-                                Sign In
-                            </button>
-                        </>
-                    ) : (
-                        <Tooltip content="Sign In" placement="right">
-                            <button
-                                onClick={onRequireAuth}
-                                className="w-8 h-8 flex items-center justify-center bg-theme-500 text-white rounded-full hover:bg-theme-600 transition-colors shadow-sm"
-                            >
-                                <Heart size={14} />
-                            </button>
-                        </Tooltip>
-                    )}
-                </div>
+                    <div className={`flex-1 flex flex-col items-center justify-center p-4 text-center border border-dashed border-black/10 dark:border-white/10 rounded-xl mx-2 ${isCollapsed ? 'lg:hidden' : ''}`}>
+                        <div className="w-10 h-10 bg-theme-500/10 rounded-full flex items-center justify-center mb-2 text-theme-500">
+                            <Heart size={18} />
+                        </div>
+                        <p className="text-xs font-semibold mb-1 text-black dark:text-white">Sign in required</p>
+                        <p className="text-[11px] text-default-500 mb-3">Create playlists and save favorites</p>
+                        <button
+                            onClick={onRequireAuth}
+                            className="text-xs font-semibold bg-theme-500 text-white px-4 py-2 rounded-full hover:bg-theme-600 transition-colors shadow-sm w-full"
+                        >
+                            Sign In
+                        </button>
+                    </div>
+                </>
             )}
 
             <hr className="border-black/10 dark:border-white/10" />

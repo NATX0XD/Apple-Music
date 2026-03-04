@@ -188,8 +188,12 @@ function App() {
 
     // Search handler
     const handleSearch = useCallback((term, limit = 20) => {
+        if (!userInfo) {
+            setIsModalSignInOpen(true);
+            return;
+        }
         navigate(`/?q=${encodeURIComponent(term)}&type=${contentType}&limit=${limit}`);
-    }, [contentType, navigate]);
+    }, [contentType, navigate, userInfo]);
 
     // Content type change
     const handleContentTypeChange = useCallback((type) => {
